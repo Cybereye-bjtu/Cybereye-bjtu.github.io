@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8" />
+<title>灵眸 CyberEye</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:"Segoe UI","PingFang SC",sans-serif;
+  background:#020617;
+  color:#f8fafc;
+}
+
+/* ================= 顶部导航（严格保留） ================= */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 70px;
+  background:#ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 36px;
+  z-index: 1000;
+}
+nav h1 {
+  font-size: 22px;
+  color: #1f2937;
+  margin-left: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+nav h1 img { height: 26px; }
+nav .links a {
+  color: #1f2937;
+  text-decoration: none;
+  margin-left: 18px;
+  font-size: 16px;
+}
+
+/* ================= 通用整屏 ================= */
+.screen{
+  min-height:100vh;
+  padding:70px 60px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+}
+
+/* ================= 滚动动画 ================= */
+.reveal{
+  opacity:0;
+  transform:translateY(40px);
+  transition:all .8s ease;
+}
+.reveal.active{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* ================= 第一面 ================= */
+.hero{
+  background:
+    linear-gradient(180deg, rgba(15,23,42,.55), rgba(2,6,23,.95)),
+    url("微信图片_20250913004543_14_6 (1).jpg") center/cover no-repeat;
+}
+.hero h1{
+  font-size:68px;
+  color:#a78bfa;
+  margin-bottom:18px;
+}
+.hero h2{
+  font-size:30px;
+  margin-bottom:26px;
+}
+.tags{
+  display:flex;
+  gap:18px;
+  margin-bottom:28px;
+}
+.tags span{
+  padding:8px 22px;
+  border:1px solid rgba(255,255,255,.25);
+  border-radius:999px;
+  font-size:14px;
+}
+.hero p{
+  font-size:18px;
+  line-height:1.9;
+  color:#e5e7eb;
+  max-width:900px;
+  margin-bottom:32px;
+}
+.school{
+  padding:12px 28px;
+  background:#8b5cf6;
+  border-radius:10px;
+  font-weight:600;
+}
+
+/* ================= 通用 Section ================= */
+.section{
+  background:radial-gradient(circle at top,#1e1b4b,#020617);
+}
+.section h2{
+  font-size:52px;
+  margin-bottom:60px;
+}
+
+/* ================= 卡片 ================= */
+.cards{
+  width:100%;
+  max-width:1100px;
+  display:grid;
+  gap:36px;
+}
+.three{grid-template-columns:repeat(3,1fr)}
+.two{grid-template-columns:repeat(2,1fr)}
+
+.card{
+  background:rgba(255,255,255,.06);
+  border-radius:22px;
+  padding:46px 34px;
+}
+.card h3{
+  font-size:22px;
+  margin-bottom:16px;
+}
+.card p{
+  font-size:16px;
+  line-height:1.8;
+  color:#e5e7eb;
+}
+
+.card{
+  background:rgba(255,255,255,.06);
+  border-radius:22px;
+  overflow:hidden;
+  padding:0;
+  transition:.3s;
+}
+
+.card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 20px 50px rgba(139,92,246,.25);
+}
+
+.card-img{
+  width:100%;
+  height:220px; /* 👈 控制图片大小 */
+  overflow:hidden;
+}
+
+.card-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transition:.4s;
+}
+
+.card:hover .card-img img{
+  transform:scale(1.05);
+}
+
+.card-content{
+  padding:32px 28px 38px;
+}
+
+.card-content h3{
+  font-size:22px;
+  margin-bottom:14px;
+}
+
+.card-content p{
+  font-size:16px;
+  line-height:1.8;
+  color:#e5e7eb;
+}
+
+
+
+/* ================= 第四面占位 ================= */
+.placeholder .img-box{
+  height:180px;
+  border:2px dashed rgba(167,139,250,.6);
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#c7d2fe;
+  margin-bottom:18px;
+}
+
+/* ================= 第五面（仅改背景渐变） ================= */
+.footer{
+  background:
+    linear-gradient(
+      180deg,
+      #020617 0%,
+      #1e1b4b 55%,
+      #7c3aed 100%
+    );
+}
+.footer h2{
+  font-size:48px;
+  margin-bottom:20px;
+}
+.footer p{
+  font-size:20px;
+  margin-bottom:50px;
+}
+
+/* 联系我们下方紫色填充（保持原样） */
+.contact{
+  font-size:18px;
+  position:relative;
+  display:inline-block;
+}
+.contact::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:-10px;
+  width:42px;
+  height:6px;
+  background:#a78bfa;
+  border-radius:999px;
+}
+  /* ======= 第五面升级为大 CTA 展示 ======= */
+.footer{
+  background:
+    radial-gradient(120% 80% at 50% 100%, #2563eb 0%, transparent 60%),
+    linear-gradient(180deg, #020617 0%, #1e1b4b 45%, #7c3aed 100%);
+  text-align:center;
+}
+
+.footer-title{
+  font-size:44px;
+  font-weight:700;
+  margin-bottom:18px;
+}
+
+.footer-sub{
+  font-size:20px;
+  color:#e5e7eb;
+  margin-bottom:46px;
+}
+
+/* CTA 按钮 */
+.cta-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:14px 36px;
+  font-size:18px;
+  border-radius:999px;
+  background:linear-gradient(135deg,#3b82f6,#a78bfa);
+  color:#fff;
+  cursor:pointer;
+  transition:.3s;
+}
+.cta-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 40px rgba(139,92,246,.45);
+}
+.card-img iframe{
+  width:100%;
+  height:100%;
+  border:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<nav>
+  <h1>
+    <img src="微信图片_20260226225324_49_160(1).png" alt="CyberEye Logo">
+    灵眸
+  </h1>
+  <div class="links">
+    <a href="index.html">关于</a>
+    <a href="chat.html">研究</a>
+    <a href="faq.html">设施</a>
+    <a href="progress.html">团队</a>
+    <a href="rag.html">媒体</a>
+    <a href="contact.html">联系方式</a>
+  </div>
+</nav>
+
+<!-- 第一面 -->
+<section class="screen hero">
+  <h1 class="reveal">灵眸 CyberEye</h1>
+  <h2 class="reveal">跨空间大模型</h2>
+  <div class="tags reveal">
+    <span>物理空间</span>
+    <span>信息空间</span>
+  </div>
+  <p class="reveal">
+整合物理空间具身感知与信息空间多源数据，进行高阶推理与主动认知，在交通、工业等复杂现实场景中带来超越传统的洞察与判断能力。
+  </p>
+  <div class="school reveal">北京交通大学</div>
+</section>
+
+<!-- 第二面 -->
+<section class="screen section">
+  <h2 class="reveal">核心能力</h2>
+  <div class="cards three reveal">
+
+    <div class="card">
+      <div class="card-img">
+        <img src="图片1.png" alt="类人导航">
+      </div>
+      <div class="card-content">
+        <h3>类人导航</h3>
+        <p>模拟人类跨空间认知方式，实现自主环境探索与路径规划，应对复杂场景。</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img">
+        <img src="Gemini_Generated_Image_1842j11842j11842.png" alt="认知问答">
+      </div>
+      <div class="card-content">
+        <h3>认知问答</h3>
+        <p>基于多源信息与跨空间上下文理解，实现自主认知增强与智能问答。</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img">
+        <img src="任务智策.png" alt="任务智策">
+      </div>
+      <div class="card-content">
+        <h3>任务智策</h3>
+        <p>支持基于意图的任务编排与资源调配，实现多智能体协同与自适应决策。</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- 第三面 -->
+<section class="screen section">
+  <h2 class="reveal">应用场景</h2>
+  <div class="cards two reveal">
+
+    <div class="card">
+      <div class="card-img">
+        <img src="智慧交运系统.png" alt="智慧交运系统">
+      </div>
+      <div class="card-content">
+        <h3>智慧交运系统</h3>
+        <p>融合多源交通感知与线上数字信息，实现基于目标的运输规划、协同调度、安全监控与风险预警</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img">
+        <img src="ChatGPT Image 2026年3月12日 22_40_29.png" alt="具身安监系统">
+      </div>
+      <div class="card-content">
+        <h3>具身安监系统</h3>
+        <p>协同巡检设备、监控系统与线上信息，对工厂等复杂环境进行主动认知，全面提升安全监测与应急响应能力。</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="screen section">
+  <h2 class="reveal">产品成果演示</h2>
+
+  <div class="cards two reveal">
+
+    <div class="card">
+      <div class="card-img">
+        <iframe 
+          src="//player.bilibili.com/player.html?isOutside=true&aid=116153330505758&bvid=BV18BPMzPEnf&cid=36374449716&p=1"
+          allowfullscreen>
+        </iframe>
+      </div>
+      <div class="card-content">
+        <p>工业智能巡检系统：基于跨空间大模型，实现问题驱动的主动认知与探索</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img">
+        <iframe 
+          src="//player.bilibili.com/player.html?isOutside=true&aid=116154202854684&bvid=BV1xgPgzcEuD&cid=36379035516&p=1"
+          allowfullscreen>
+        </iframe>
+      </div>
+      <div class="card-content">
+        <p>集群规划调度系统：基于神经符号协同，实现高效可靠地集群任务规划与动态调度</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+  </div>
+</section>
+<section class="screen footer">
+  <div class="reveal">
+
+    <div class="footer-title">
+      联系我们
+    </div>
+
+    <div class="footer-sub">
+      跨空间认知 · 多模态融合 · 具身智能协同
+    </div>
+
+    <div class="cta-btn">
+      联系我们
+      <span>›</span>
+    </div>
+
+    <!-- 严格按图片格式排版 -->
+    <div style="margin-top:80px;max-width:600px;text-align:left;">
+
+      <!-- Address -->
+      <div style="display:flex;align-items:flex-start;margin-bottom:40px;gap:18px;">
+        <div style="font-size:22px;">📍</div>
+        <div>
+          <div style="font-size:20px;font-weight:600;margin-bottom:10px;">Address</div>
+          <div style="line-height:1.8;color:#e5e7eb;">
+            北京交通大学<br>
+            北京市海淀区上园村3号<br>
+            Beijing, China 100044
+          </div>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div style="display:flex;align-items:flex-start;gap:18px;">
+        <div style="font-size:22px;">✉️</div>
+        <div>
+          <div style="font-size:20px;font-weight:600;margin-bottom:10px;">Email</div>
+          <div style="line-height:1.8;color:#e5e7eb;">
+            wangqb6@outlook.com
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+
+<script>
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(e.isIntersecting)e.target.classList.add("active")
+  })
+},{threshold:.15});
+document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+</script>
+
+</body>
+</html>
