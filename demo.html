@@ -3,25 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RailVQA: A Benchmark and Framework for Efficient Interpretable Visual Cognition in Automatic Train Operation</title>
+  <title>RailVQA — A Benchmark and Framework for Efficient Interpretable Visual Cognition in Automatic Train Operation</title>
+
   <style>
     :root{
-      --primary:#1f4f8f;
-      --primary-dark:#173b69;
-      --accent:#2d6cc0;
-      --text:#1d1d1f;
-      --muted:#666;
-      --light:#f6f8fb;
-      --border:#dfe6f1;
-      --shadow:0 8px 28px rgba(0,0,0,0.08);
-      --radius:16px;
-      --maxw:1180px;
+      --bg:#07111f;
+      --bg-2:#0a1830;
+      --bg-3:#0f2346;
+      --card:rgba(17, 34, 64, 0.72);
+      --card-2:rgba(14, 28, 52, 0.86);
+      --line:rgba(255,255,255,0.08);
+      --line-2:rgba(103, 175, 255, 0.22);
+      --text:#e9f2ff;
+      --muted:rgba(233,242,255,0.72);
+      --muted-2:rgba(233,242,255,0.55);
+      --primary:#6ab6ff;
+      --primary-2:#7de2ff;
+      --accent:#8b8fff;
+      --shadow:0 20px 60px rgba(0,0,0,0.35);
+      --radius:22px;
+      --radius-sm:16px;
+      --maxw:1200px;
     }
 
     *{
-      box-sizing:border-box;
       margin:0;
       padding:0;
+      box-sizing:border-box;
     }
 
     html{
@@ -29,10 +37,27 @@
     }
 
     body{
-      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      font-family: Inter, "Segoe UI", Roboto, Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
       color:var(--text);
-      background:#ffffff;
-      line-height:1.6;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(68,126,255,0.18), transparent 32%),
+        radial-gradient(circle at 80% 18%, rgba(125,226,255,0.12), transparent 30%),
+        linear-gradient(180deg, #06101d 0%, #081528 28%, #0a1730 58%, #0a1731 100%);
+      overflow-x:hidden;
+      line-height:1.7;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.45), transparent 85%);
+      z-index:0;
     }
 
     a{
@@ -46,725 +71,1273 @@
     }
 
     .container{
-      width:min(var(--maxw), 92%);
+      width:min(var(--maxw), calc(100% - 40px));
       margin:0 auto;
+      position:relative;
+      z-index:1;
     }
 
-    /* =========================
-       HERO
-       ========================= */
-    .hero{
-      padding:48px 0 28px;
-      text-align:center;
-      background:#fff;
+    /* ===== NAV ===== */
+    .nav{
+      position:sticky;
+      top:0;
+      z-index:50;
+      backdrop-filter: blur(18px);
+      background:rgba(6, 16, 29, 0.72);
+      border-bottom:1px solid rgba(255,255,255,0.06);
     }
 
-    .paper-title{
-      font-size: clamp(2rem, 4vw, 3.2rem);
+    .nav-inner{
+      width:min(var(--maxw), calc(100% - 40px));
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      height:76px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
       font-weight:700;
-      line-height:1.18;
-      letter-spacing:-0.02em;
-      max-width:1050px;
-      margin:0 auto 18px;
+      letter-spacing:0.2px;
+      font-size:18px;
     }
 
-    .authors{
-      font-size:1.05rem;
-      color:#222;
-      margin-bottom:10px;
-      line-height:1.8;
+    .brand-mark{
+      width:34px;
+      height:34px;
+      border-radius:12px;
+      background:
+        radial-gradient(circle at 35% 35%, rgba(255,255,255,0.35), transparent 25%),
+        linear-gradient(135deg, rgba(106,182,255,0.95), rgba(125,226,255,0.75));
+      box-shadow: 0 8px 22px rgba(106,182,255,0.35);
+      position:relative;
+      overflow:hidden;
     }
 
-    .authors span{
-      color:var(--primary);
-      font-weight:500;
+    .brand-mark::before{
+      content:"";
+      position:absolute;
+      inset:7px;
+      border:1.5px solid rgba(255,255,255,0.45);
+      border-radius:10px;
     }
 
-    .affiliation{
-      font-size:1rem;
+    .brand span{
       color:var(--muted);
-      margin-bottom:8px;
+      font-weight:600;
+      font-size:14px;
+      margin-left:6px;
     }
 
-    .venue{
-      font-size:1rem;
+    .nav-links{
+      display:flex;
+      align-items:center;
+      gap:26px;
+      font-size:14px;
       color:var(--muted);
+    }
+
+    .nav-links a:hover{
+      color:var(--text);
+    }
+
+    .nav-btn{
+      padding:10px 16px;
+      border:1px solid rgba(106,182,255,0.28);
+      border-radius:999px;
+      background:rgba(106,182,255,0.08);
+      color:#dff0ff;
+      transition:.25s ease;
+    }
+
+    .nav-btn:hover{
+      background:rgba(106,182,255,0.16);
+      border-color:rgba(106,182,255,0.45);
+    }
+
+    /* ===== HERO ===== */
+    .hero{
+      padding:70px 0 56px;
+      position:relative;
+    }
+
+    .hero::after{
+      content:"";
+      position:absolute;
+      inset:auto 0 0 0;
+      height:1px;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap:40px;
+      align-items:center;
+    }
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:1.5px;
+      color:var(--primary-2);
+      font-weight:700;
+      padding:8px 14px;
+      border:1px solid rgba(125,226,255,0.18);
+      border-radius:999px;
+      background:rgba(125,226,255,0.06);
       margin-bottom:22px;
+    }
+
+    .hero h1{
+      font-size:clamp(34px, 5vw, 64px);
+      line-height:1.08;
+      letter-spacing:-0.03em;
+      margin-bottom:18px;
+      font-weight:800;
+    }
+
+    .hero p{
+      color:var(--muted);
+      font-size:17px;
+      max-width:720px;
+      margin-bottom:26px;
     }
 
     .hero-actions{
       display:flex;
-      justify-content:center;
-      gap:14px;
       flex-wrap:wrap;
-      margin-bottom:18px;
+      gap:14px;
+      margin-bottom:28px;
     }
 
     .btn{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      padding:10px 18px;
+      padding:13px 20px;
       border-radius:999px;
-      font-size:0.98rem;
-      font-weight:600;
-      border:1px solid var(--primary);
+      font-weight:700;
+      font-size:14px;
       transition:.25s ease;
-      min-width:120px;
+      border:1px solid transparent;
     }
 
     .btn-primary{
-      background:var(--primary);
-      color:#fff;
+      color:#05101e;
+      background:linear-gradient(135deg, #89d5ff, #8c92ff);
+      box-shadow: 0 12px 30px rgba(117, 182, 255, 0.28);
     }
 
     .btn-primary:hover{
-      background:var(--primary-dark);
-      transform:translateY(-1px);
+      transform:translateY(-2px);
     }
 
-    .btn-outline{
-      color:var(--primary);
-      background:#fff;
+    .btn-secondary{
+      border-color:rgba(255,255,255,0.10);
+      background:rgba(255,255,255,0.04);
+      color:var(--text);
     }
 
-    .btn-outline:hover{
-      background:#f1f6ff;
-      transform:translateY(-1px);
+    .btn-secondary:hover{
+      background:rgba(255,255,255,0.08);
     }
 
-    .hero-note{
-      margin-top:8px;
-      color:#777;
-      font-size:0.95rem;
+    .hero-meta{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(120px, 1fr));
+      gap:14px;
+      max-width:720px;
     }
 
-    /* =========================
-       Section General
-       ========================= */
-    section{
-      padding:34px 0 26px;
-    }
-
-    .section-title{
-      font-size:1.75rem;
-      font-weight:700;
-      margin-bottom:16px;
-      color:#111;
-      text-align:center;
-    }
-
-    .section-subtitle{
-      font-size:1rem;
-      color:var(--muted);
-      margin:0 auto 18px;
-      max-width:960px;
-      text-align:center;
-    }
-
-    .paper-card{
-      background:var(--light);
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      padding:22px 24px;
-      box-shadow:0 2px 12px rgba(0,0,0,0.03);
-    }
-
-    /* =========================
-       KEY FEATURES (OpenNav-like)
-       ========================= */
-    .keyfeatures-wrap{
-      max-width:980px;
-      margin:0 auto;
-      text-align:center;
-    }
-
-    .keyfeatures-list{
-      list-style:none;
-      margin-top:8px;
-    }
-
-    .keyfeatures-item{
-      margin-bottom:18px;
-      font-size:1.02rem;
-      color:#222;
-      line-height:1.9;
-    }
-
-    .keyfeatures-item strong{
-      color:#111;
-      font-weight:700;
-    }
-
-    /* =========================
-       Figure / Placeholder (缩小为 OpenNav 风格)
-       ========================= */
-    .figure-block{
-      margin-top:8px;
-    }
-
-    /* 外层控制图片整体宽度，模拟 OpenNav 原站居中且不铺满 */
-    .figure-shell{
-      width:82%;
-      margin:0 auto;
-    }
-
-    .figure-shell.wide{
-      width:86%;
-    }
-
-    .figure-shell.narrow{
-      width:76%;
-    }
-
-    .figure-frame{
-      width:100%;
-      min-height:340px;
-      background:linear-gradient(135deg, #f8fbff 0%, #eef4fc 100%);
-      border:2px dashed #b8c9e3;
+    .meta-card{
+      padding:16px 18px;
       border-radius:18px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
+      background:rgba(255,255,255,0.035);
+      border:1px solid rgba(255,255,255,0.06);
+      box-shadow: var(--shadow);
+    }
+
+    .meta-card h4{
+      font-size:22px;
+      line-height:1;
+      margin-bottom:8px;
+      color:#f3f9ff;
+    }
+
+    .meta-card p{
+      margin:0;
+      font-size:12px;
+      color:var(--muted-2);
+      line-height:1.5;
+    }
+
+    .hero-panel{
+      border-radius:28px;
+      background:
+        linear-gradient(180deg, rgba(16,34,64,0.82), rgba(9,21,41,0.86));
+      border:1px solid rgba(255,255,255,0.08);
+      box-shadow: var(--shadow);
+      padding:26px;
       position:relative;
       overflow:hidden;
     }
 
-    .figure-frame.large{
-      min-height:420px;
+    .hero-panel::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 18% 15%, rgba(106,182,255,0.16), transparent 26%),
+        radial-gradient(circle at 80% 25%, rgba(139,143,255,0.14), transparent 28%);
+      pointer-events:none;
     }
 
-    .figure-frame.medium{
-      min-height:360px;
+    .hero-panel-grid{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns:1fr;
+      gap:14px;
     }
 
-    .figure-frame.small{
-      min-height:300px;
+    .mini-card{
+      padding:18px;
+      border-radius:18px;
+      background:rgba(255,255,255,0.035);
+      border:1px solid rgba(255,255,255,0.06);
     }
 
-    .placeholder-inner{
-      text-align:center;
-      padding:28px;
+    .mini-card h5{
+      font-size:13px;
+      letter-spacing:0.8px;
+      text-transform:uppercase;
+      color:var(--primary-2);
+      margin-bottom:8px;
+    }
+
+    .mini-card p{
+      color:var(--muted);
+      font-size:14px;
+      margin:0;
+    }
+
+    .pipeline{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+
+    .chip{
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(106,182,255,0.10);
+      border:1px solid rgba(106,182,255,0.18);
+      font-size:12px;
+      color:#dff2ff;
+      font-weight:600;
+    }
+
+    .arrow{
+      color:rgba(255,255,255,0.32);
+      font-size:14px;
+    }
+
+    /* ===== SECTIONS ===== */
+    section{
+      padding:78px 0;
+      position:relative;
+    }
+
+    .section-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:24px;
+      margin-bottom:28px;
+    }
+
+    .section-title{
       max-width:760px;
     }
 
-    .placeholder-tag{
-      display:inline-block;
-      padding:6px 12px;
-      border-radius:999px;
-      background:#e8f0fb;
-      color:var(--primary);
-      font-size:0.88rem;
+    .section-kicker{
+      color:var(--primary-2);
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:1.6px;
       font-weight:700;
-      margin-bottom:14px;
-      border:1px solid #cddcf1;
-    }
-
-    .placeholder-title{
-      font-size:1.35rem;
-      font-weight:700;
-      color:#1a3d6b;
       margin-bottom:10px;
     }
 
-    .placeholder-desc{
-      font-size:0.98rem;
-      color:#58708e;
-      line-height:1.75;
+    .section-title h2{
+      font-size:clamp(28px, 4vw, 46px);
+      line-height:1.12;
+      letter-spacing:-0.03em;
+      margin-bottom:12px;
     }
 
-    /* 图下方说明：比之前更长、更像论文主页 */
+    .section-title p{
+      color:var(--muted);
+      font-size:16px;
+    }
+
+    .section-note{
+      color:var(--muted-2);
+      font-size:13px;
+      max-width:260px;
+      text-align:right;
+    }
+
+    .glass-card{
+      background:linear-gradient(180deg, rgba(16,34,64,0.74), rgba(10,22,41,0.82));
+      border:1px solid rgba(255,255,255,0.07);
+      border-radius:24px;
+      box-shadow: var(--shadow);
+    }
+
+    /* ===== FIGURE ===== */
+    .figure-wrap{
+      margin-top:24px;
+    }
+
+    .paper-figure{
+      width:100%;
+      max-width:860px;
+      margin:0 auto;
+      text-align:center;
+    }
+
+    .paper-image{
+      width:100%;
+      height:auto;
+      display:block;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,0.08);
+      background:linear-gradient(180deg, #0f1e38, #0a1730);
+      box-shadow: 0 14px 36px rgba(0,0,0,0.28);
+    }
+
     .figure-caption{
-      width:82%;
-      margin:16px auto 0;
-      font-size:0.98rem;
-      color:#333;
-      line-height:1.9;
-      text-align:left;
+      margin-top:14px;
+      font-size:14px;
+      line-height:1.8;
+      color:var(--muted);
+      max-width:780px;
+      margin-left:auto;
+      margin-right:auto;
     }
 
-    .figure-caption strong{
-      color:#111;
+    /* ===== OVERVIEW GRID ===== */
+    .overview-grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:18px;
+      margin-top:28px;
     }
 
-    .figure-caption p{
+    .overview-card{
+      padding:22px;
+      border-radius:20px;
+      background:rgba(255,255,255,0.035);
+      border:1px solid rgba(255,255,255,0.06);
+    }
+
+    .overview-card .num{
+      width:34px;
+      height:34px;
+      border-radius:12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:800;
+      font-size:14px;
+      color:#081528;
+      background:linear-gradient(135deg, #86d1ff, #a4b2ff);
+      margin-bottom:14px;
+    }
+
+    .overview-card h3{
+      font-size:18px;
       margin-bottom:10px;
     }
 
-    /* =========================
-       Videos (保持不改)
-       ========================= */
+    .overview-card p{
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    /* ===== KEY FEATURES ===== */
+    .features-head-center{
+      text-align:center;
+      max-width:860px;
+      margin:0 auto 34px;
+    }
+
+    .features-head-center .section-kicker{
+      justify-content:center;
+    }
+
+    .features-grid{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:18px;
+    }
+
+    .feature-card{
+      padding:22px;
+      border-radius:20px;
+      background:rgba(255,255,255,0.035);
+      border:1px solid rgba(255,255,255,0.06);
+      transition:.25s ease;
+    }
+
+    .feature-card:hover{
+      transform:translateY(-4px);
+      border-color:rgba(106,182,255,0.22);
+    }
+
+    .feature-icon{
+      width:44px;
+      height:44px;
+      border-radius:14px;
+      margin:0 auto 14px;
+      background:linear-gradient(135deg, rgba(106,182,255,0.22), rgba(139,143,255,0.18));
+      border:1px solid rgba(255,255,255,0.08);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#dff3ff;
+      font-weight:800;
+      font-size:16px;
+    }
+
+    .feature-card h3{
+      text-align:center;
+      font-size:17px;
+      margin-bottom:10px;
+    }
+
+    .feature-card p{
+      text-align:center;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    /* ===== TWO COL ===== */
+    .two-col{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:22px;
+      margin-top:28px;
+    }
+
+    .content-card{
+      padding:24px;
+      border-radius:22px;
+      background:rgba(255,255,255,0.035);
+      border:1px solid rgba(255,255,255,0.06);
+    }
+
+    .content-card h3{
+      font-size:20px;
+      margin-bottom:12px;
+    }
+
+    .content-card p{
+      color:var(--muted);
+      font-size:14px;
+      margin-bottom:12px;
+    }
+
+    .content-card ul{
+      list-style:none;
+      display:grid;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .content-card li{
+      color:var(--muted);
+      font-size:14px;
+      padding-left:18px;
+      position:relative;
+    }
+
+    .content-card li::before{
+      content:"";
+      width:7px;
+      height:7px;
+      border-radius:50%;
+      background:linear-gradient(135deg, #86d1ff, #9ca7ff);
+      position:absolute;
+      left:0;
+      top:9px;
+    }
+
+    /* ===== VIDEO ===== */
     .video-grid{
       display:grid;
       grid-template-columns:1fr 1fr;
       gap:22px;
-      margin-top:8px;
+      margin-top:28px;
     }
 
     .video-card{
-      background:#fff;
-      border:1px solid var(--border);
-      border-radius:18px;
+      border-radius:24px;
       overflow:hidden;
-      box-shadow:var(--shadow);
+      background:linear-gradient(180deg, rgba(16,34,64,0.82), rgba(10,22,41,0.9));
+      border:1px solid rgba(255,255,255,0.07);
+      box-shadow: var(--shadow);
+    }
+
+    .video-top{
+      padding:18px 20px;
+      border-bottom:1px solid rgba(255,255,255,0.06);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .video-top h3{
+      font-size:16px;
+    }
+
+    .video-top span{
+      font-size:12px;
+      color:var(--muted-2);
     }
 
     .video-box{
-      aspect-ratio: 16 / 9;
-      background:linear-gradient(135deg, #eef4fb, #dde9f8);
-      border-bottom:1px solid var(--border);
+      aspect-ratio:16 / 9;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(106,182,255,0.12), transparent 24%),
+        linear-gradient(180deg, #0d1c34, #081426);
       display:flex;
       align-items:center;
       justify-content:center;
-      color:#5c7597;
-      font-weight:600;
-      font-size:1rem;
-      letter-spacing:0.01em;
+      color:rgba(233,242,255,0.38);
+      font-size:14px;
+      border-top:1px solid rgba(255,255,255,0.04);
     }
 
-    .video-meta{
-      padding:16px 18px;
+    .video-box video{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      background:#000;
     }
 
-    .video-meta h4{
-      font-size:1.05rem;
-      margin-bottom:6px;
-      color:#16375f;
-    }
-
-    .video-meta p{
-      color:#666;
-      font-size:0.95rem;
-    }
-
-    /* =========================
-       Two-column text
-       ========================= */
-    .two-col{
+    /* ===== TIMELINE ===== */
+    .timeline{
+      margin-top:28px;
       display:grid;
-      grid-template-columns:1.1fr 0.9fr;
+      gap:18px;
+    }
+
+    .timeline-item{
+      display:grid;
+      grid-template-columns: 130px 1fr;
+      gap:18px;
+      align-items:start;
+      padding:18px;
+      border-radius:20px;
+      background:rgba(255,255,255,0.03);
+      border:1px solid rgba(255,255,255,0.06);
+    }
+
+    .timeline-tag{
+      font-size:12px;
+      font-weight:700;
+      color:var(--primary-2);
+      text-transform:uppercase;
+      letter-spacing:1px;
+      padding-top:2px;
+    }
+
+    .timeline-body h3{
+      font-size:18px;
+      margin-bottom:8px;
+    }
+
+    .timeline-body p{
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    /* ===== FOOTER ===== */
+    footer{
+      padding:56px 0 70px;
+      border-top:1px solid rgba(255,255,255,0.06);
+      margin-top:10px;
+    }
+
+    .footer-grid{
+      display:grid;
+      grid-template-columns: 1.2fr 0.8fr;
       gap:24px;
       align-items:start;
     }
 
-    .metric-grid{
-      display:grid;
-      grid-template-columns:repeat(2, 1fr);
-      gap:14px;
+    .footer-left h3{
+      font-size:24px;
+      margin-bottom:12px;
     }
 
-    .metric{
-      background:#f7faff;
-      border:1px solid #dbe7f6;
-      border-radius:14px;
-      padding:16px;
+    .footer-left p{
+      color:var(--muted);
+      font-size:15px;
+      max-width:700px;
     }
 
-    .metric .value{
-      font-size:1.35rem;
-      font-weight:700;
-      color:var(--primary);
-      margin-bottom:4px;
+    .footer-links{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      justify-content:flex-end;
     }
 
-    .metric .label{
-      font-size:0.92rem;
-      color:#666;
+    .footer-links a{
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.06);
+      color:var(--muted);
+      font-size:13px;
     }
 
-    /* =========================
-       Footer / BibTeX-like
-       ========================= */
-    .code-block{
-      background:#0f1720;
-      color:#d7e3f4;
-      border-radius:16px;
-      padding:18px 20px;
-      overflow:auto;
-      font-family:Consolas, "Courier New", monospace;
-      font-size:0.92rem;
-      line-height:1.65;
-      border:1px solid #223347;
+    .footer-links a:hover{
+      color:var(--text);
+      border-color:rgba(106,182,255,0.18);
     }
 
-    .footer{
-      padding:36px 0 60px;
-      color:#777;
-      font-size:0.95rem;
-      text-align:center;
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1100px){
+      .features-grid{
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .overview-grid{
+        grid-template-columns: 1fr;
+      }
+      .hero-grid{
+        grid-template-columns: 1fr;
+      }
+      .section-head{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+      .section-note{
+        text-align:left;
+        max-width:none;
+      }
     }
 
-    .divider{
-      width:100%;
-      height:1px;
-      background:linear-gradient(to right, transparent, #d9e4f3, transparent);
-      margin:8px 0;
-    }
-
-    @media (max-width: 900px){
-      .video-grid,
-      .two-col{
+    @media (max-width: 860px){
+      .nav-links{
+        display:none;
+      }
+      .two-col,
+      .video-grid{
         grid-template-columns:1fr;
       }
-
-      .figure-shell,
-      .figure-shell.wide,
-      .figure-shell.narrow,
-      .figure-caption{
-        width:94%;
+      .timeline-item{
+        grid-template-columns:1fr;
       }
-
-      .figure-frame.large{
-        min-height:320px;
-      }
-
-      .figure-frame.medium{
-        min-height:280px;
+      .hero-meta{
+        grid-template-columns:1fr;
       }
     }
 
     @media (max-width: 640px){
+      .container,
+      .nav-inner{
+        width:min(var(--maxw), calc(100% - 24px));
+      }
       .hero{
-        padding-top:34px;
+        padding-top:44px;
       }
-
-      .paper-title{
-        font-size:1.7rem;
+      .features-grid{
+        grid-template-columns:1fr;
       }
-
-      .section-title{
-        font-size:1.4rem;
+      section{
+        padding:58px 0;
       }
-
-      .figure-frame.large,
-      .figure-frame.medium,
-      .figure-frame.small{
-        min-height:240px;
-      }
-
-      .placeholder-title{
-        font-size:1.1rem;
+      .hero h1{
+        font-size:32px;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- HERO -->
-  <header class="hero">
+  <!-- ===================== NAV ===================== -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="#top" class="brand">
+        <div class="brand-mark"></div>
+        RailVQA <span>Paper Website</span>
+      </a>
+
+      <div class="nav-links">
+        <a href="#overview">Overview</a>
+        <a href="#features">Key Features</a>
+        <a href="#benchmark">Benchmark</a>
+        <a href="#framework">Framework</a>
+        <a href="#results">Results</a>
+        <a href="#videos" class="nav-btn">Demo Videos</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===================== HERO ===================== -->
+  <header class="hero" id="top">
     <div class="container">
-      <h1 class="paper-title">
-        RailVQA: A Benchmark and Framework for Efficient Interpretable
-        Visual Cognition in Automatic Train Operation
-      </h1>
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">Automatic Train Operation · Visual Question Answering</div>
 
-      <div class="authors">
-        <span>Sen Zhang</span>, <span>Runmei Li</span>, <span>Zhichao Zheng</span>,
-        <span>Yuhe Zhang</span>, <span>Jiani Li</span>, <span>Kailun Zhang</span>,
-        <span>Tao Zhang</span>, <span>Wenjun Wu</span>, <span>Qunbo Wang*</span>
-      </div>
+          <h1>
+            RailVQA:
+            A Benchmark and Framework for
+            Efficient Interpretable Visual Cognition
+            in Automatic Train Operation
+          </h1>
 
-      <div class="affiliation">
-        Beijing Jiaotong University · Northwestern Polytechnical University · Beihang University
-      </div>
+          <p>
+            RailVQA introduces the first dedicated VQA benchmark for cab-view visual cognition in
+            automatic train operation, together with RailVQA-CoM — a collaborative large–small model
+            framework that unifies efficient perception, temporal motion understanding, and interpretable
+            decision-oriented reasoning for safety-critical railway scenarios.
+          </p>
 
-      <div class="venue">
-        Academic Project Page · Automatic Train Operation / Visual Cognition / Railway Safety
-      </div>
+          <div class="hero-actions">
+            <a href="#overview" class="btn btn-primary">Explore the Paper</a>
+            <a href="#videos" class="btn btn-secondary">View Demo Layout</a>
+          </div>
 
-      <div class="hero-actions">
-        <a href="#" class="btn btn-primary">Paper</a>
-        <a href="#" class="btn btn-outline">Code</a>
-        <a href="#" class="btn btn-outline">Dataset</a>
-      </div>
+          <div class="hero-meta">
+            <div class="meta-card">
+              <h4>20,000</h4>
+              <p>Single-frame QA pairs for static railway scene cognition</p>
+            </div>
+            <div class="meta-card">
+              <h4>1,168</h4>
+              <p>Video-based QA pairs for dynamic safety-critical reasoning</p>
+            </div>
+            <div class="meta-card">
+              <h4>24%–36%</h4>
+              <p>End-to-end latency reduction reported by the collaborative framework</p>
+            </div>
+          </div>
+        </div>
 
-      <div class="hero-note">
-        Replace button links later with the actual paper / GitHub / dataset URLs.
+        <div class="hero-panel">
+          <div class="hero-panel-grid">
+            <div class="mini-card">
+              <h5>Core Research Goal</h5>
+              <p>
+                Shift railway intelligence from low-level perception only to
+                perception + reasoning + planning, while preserving efficiency and interpretability.
+              </p>
+            </div>
+
+            <div class="mini-card">
+              <h5>Structured Output Design</h5>
+              <div class="pipeline">
+                <div class="chip">Perception</div>
+                <div class="arrow">→</div>
+                <div class="chip">Reasoning</div>
+                <div class="arrow">→</div>
+                <div class="chip">Planning</div>
+                <div class="arrow">→</div>
+                <div class="chip">Final Answer</div>
+              </div>
+            </div>
+
+            <div class="mini-card">
+              <h5>Why It Matters</h5>
+              <p>
+                Railway operation requires rule-grounded compliance, long braking-distance awareness,
+                and temporal hazard anticipation — properties that generic road-centric VQA systems do not directly satisfy.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </header>
 
-  <div class="divider"></div>
-
-  <!-- KEY FEATURES -->
-  <section>
+  <!-- ===================== OVERVIEW ===================== -->
+  <section id="overview">
     <div class="container">
-      <h2 class="section-title">Key Features</h2>
-      <div class="keyfeatures-wrap">
-        <ul class="keyfeatures-list">
-          <li class="keyfeatures-item">
-            <strong>First ATO-oriented visual cognition benchmark.</strong>
-            RailVQA-bench is designed specifically for cab-view railway intelligence, covering both static single-frame understanding and dynamic multi-frame safety reasoning, enabling evaluation beyond traditional object-level perception.
-          </li>
-          <li class="keyfeatures-item">
-            <strong>Structured and interpretable Chain-of-Thought output.</strong>
-            Instead of producing only a final answer, the benchmark explicitly supervises four progressive reasoning stages—perception, reasoning, planning, and answer generation—making the decision process transparent, auditable, and better aligned with safety-critical deployment.
-          </li>
-          <li class="keyfeatures-item">
-            <strong>Collaborative large–small model framework.</strong>
-            RailVQA-CoM combines lightweight visual perception, motion-aware temporal logging, and LMM-based cognitive inference, achieving a practical balance between efficiency, interpretability, and robust multimodal reasoning for real-world train operation scenarios.
-          </li>
-          <li class="keyfeatures-item">
-            <strong>Safety-centric temporal cognition for railway automation.</strong>
-            The framework emphasizes motion trend analysis, hazard anticipation, track-intrusion understanding, and uncertainty-aware fallback reasoning, making it especially suitable for complex and safety-sensitive ATO environments.
-          </li>
-        </ul>
+      <div class="section-head">
+        <div class="section-title">
+          <div class="section-kicker">Overview</div>
+          <h2>RailVQA reframes railway intelligence as interpretable visual cognition</h2>
+          <p>
+            Instead of evaluating only object detection or scene segmentation, RailVQA asks models to
+            understand railway scenes, reason under operational constraints, and output transparent
+            chain-of-thought style decision logic for both static and dynamic ATO scenarios.
+          </p>
+        </div>
+        <div class="section-note">
+          Figure slot below is reserved for the paper’s global framework illustration.
+        </div>
+      </div>
+
+      <!-- FIGURE 1 -->
+      <div class="figure-wrap">
+        <div class="paper-figure">
+          <img src="fig1.png" alt="RailVQA Figure 1" class="paper-image">
+          <p class="figure-caption">
+            <strong>Figure 1 (Reserved: RailVQA Paper Fig.1).</strong>
+            Place the paper’s global framework overview here. This slot is intended for the
+            RailVQA-CoM architecture figure that presents the three hierarchical modules:
+            <em>Perception Module</em>, <em>Motion Analysis &amp; Memory Log Module</em>, and
+            <em>Cognitive Inference Module</em>. In the paper, this figure serves as the central
+            visual summary of how lightweight perception and large-model reasoning are decoupled and
+            then re-coupled through structured semantic middleware for efficient, interpretable train
+            scene understanding.
+          </p>
+        </div>
+      </div>
+
+      <div class="overview-grid">
+        <div class="overview-card">
+          <div class="num">01</div>
+          <h3>Benchmark First</h3>
+          <p>
+            RailVQA-bench establishes a dedicated evaluation setting for railway cab-view cognition,
+            explicitly covering both static compliance reasoning and dynamic kinematic hazard assessment.
+          </p>
+        </div>
+
+        <div class="overview-card">
+          <div class="num">02</div>
+          <h3>Structured Reasoning</h3>
+          <p>
+            All outputs are organized into a standardized perceiving–reasoning–planning–final-answer
+            format, improving interpretability, controllability, and fine-grained evaluation.
+          </p>
+        </div>
+
+        <div class="overview-card">
+          <div class="num">03</div>
+          <h3>Efficient Collaboration</h3>
+          <p>
+            The proposed RailVQA-CoM framework offloads dense visual primitives to small models while
+            preserving high-level cognitive inference for LMMs, reducing hallucination and latency.
+          </p>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- VIDEO DEMOS (保持不改) -->
-  <section>
+  <!-- ===================== KEY FEATURES ===================== -->
+  <section id="features">
     <div class="container">
-      <h2 class="section-title">RailVQA Demo Videos</h2>
-      <p class="section-subtitle">
-        Keep this section in a two-column layout like the OpenNav style. You can directly replace each placeholder with
-        an embedded <code>&lt;iframe&gt;</code> or <code>&lt;video&gt;</code> later.
-      </p>
+      <div class="features-head-center">
+        <div class="section-kicker">Key Features</div>
+        <h2 style="font-size:clamp(28px, 4vw, 46px); line-height:1.12; letter-spacing:-0.03em; margin-bottom:12px;">
+          Built for railway-specific reasoning, not generic road VQA
+        </h2>
+        <p style="color:var(--muted); font-size:16px;">
+          Following the visual rhythm of the OpenNav-style landing page, this centered section highlights
+          the four most important design points that distinguish RailVQA from prior railway perception datasets
+          and from road-centric multimodal reasoning benchmarks.
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">A</div>
+          <h3>Static + Dynamic Dual Tasks</h3>
+          <p>
+            Covers both single-frame compliance understanding and multi-frame kinematic risk reasoning
+            under temporal context.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">B</div>
+          <h3>Structured CoT Evaluation</h3>
+          <p>
+            Enforces explicit intermediate reasoning stages rather than only scoring short final answers,
+            enabling deeper analysis of model reliability.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">C</div>
+          <h3>Large–Small Model Collaboration</h3>
+          <p>
+            Uses specialized lightweight modules for perception and motion logging while reserving
+            expensive high-level reasoning for the large multimodal model.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">D</div>
+          <h3>Safety-Critical Railway Focus</h3>
+          <p>
+            Encodes railway-specific constraints such as fixed-track motion, long braking distance,
+            signal interpretation, and intrusion response.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== BENCHMARK ===================== -->
+  <section id="benchmark">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-title">
+          <div class="section-kicker">RailVQA-Bench</div>
+          <h2>A unified benchmark for static compliance and dynamic hazard cognition</h2>
+          <p>
+            RailVQA-bench is designed around two complementary subtasks. The static task focuses on
+            rule compliance, signal understanding, and right-of-way reasoning from a single cab-view frame.
+            The dynamic task evaluates temporal tracking, intrusion analysis, and safety-critical kinematic reasoning.
+          </p>
+        </div>
+        <div class="section-note">
+          Figure slot below is reserved for the paper’s task formulation figure.
+        </div>
+      </div>
+
+      <!-- FIGURE 2 -->
+      <div class="figure-wrap">
+        <div class="paper-figure">
+          <img src="fig2.png" alt="RailVQA Figure 2" class="paper-image">
+          <p class="figure-caption">
+            <strong>Figure 2 (Reserved: RailVQA Paper Fig.2).</strong>
+            Place the benchmark task formulation figure here. This slot is intended for the paper’s
+            standardized input–output schema that contrasts
+            <em>Static Single-frame VQA</em> and <em>Dynamic Multi-frame VQA</em>, while also showing
+            the required structured output
+            <em>{Perception, Reasoning, Planning, Final Answer}</em>.
+            It is the most suitable visual anchor for the benchmark section because it directly communicates
+            the two-task design and the paper’s interpretable evaluation philosophy.
+          </p>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="content-card">
+          <h3>Task I · Static Single-frame VQA</h3>
+          <p>
+            Given a single cab-view image, the model must identify salient railway elements such as signal
+            status, route accessibility, or obstacle conditions, then infer an operation recommendation that
+            respects railway rules and right-of-way logic.
+          </p>
+          <ul>
+            <li>Single image input with compliance-oriented question</li>
+            <li>Focus on signal understanding and operational rule grounding</li>
+            <li>Emphasis on transparent intermediate reasoning, not just final classification</li>
+            <li>Designed to test whether the model can connect perception to railway action policy</li>
+          </ul>
+        </div>
+
+        <div class="content-card">
+          <h3>Task II · Dynamic Multi-frame VQA</h3>
+          <p>
+            Given a temporal frame sequence, the model must track moving targets, distinguish benign motion
+            from hazardous intrusion, and reason under train-specific physical constraints such as high momentum
+            and limited braking freedom.
+          </p>
+          <ul>
+            <li>Video sequence input with action-comprehension question</li>
+            <li>Tracks temporal object behavior and collision risk evolution</li>
+            <li>Requires motion-aware, safety-critical reasoning under temporal context</li>
+            <li>Targets realistic ATO decision support in complex dynamic environments</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FRAMEWORK ===================== -->
+  <section id="framework">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-title">
+          <div class="section-kicker">RailVQA-CoM</div>
+          <h2>Collaborative large–small model design for efficient and interpretable inference</h2>
+          <p>
+            RailVQA-CoM separates dense perception from expensive reasoning. Lightweight modules extract
+            visual primitives and motion semantics, then pass a compact semantic log and key evidence frames
+            to the LMM. This avoids pure end-to-end black-box video reasoning and substantially improves
+            efficiency while reducing hallucination risk.
+          </p>
+        </div>
+        <div class="section-note">
+          Figure slot below is reserved for the paper’s detailed framework / method illustration.
+        </div>
+      </div>
+
+      <!-- FIGURE 4 -->
+      <div class="figure-wrap">
+        <div class="paper-figure">
+          <img src="fig4.png" alt="RailVQA Figure 4" class="paper-image">
+          <p class="figure-caption">
+            <strong>Figure 4 (Reserved: RailVQA Paper Fig.4).</strong>
+            Place the detailed method figure here. This section is meant to present the paper’s deeper
+            mechanism-level illustration, especially the semantic middleware design that supports efficient
+            temporal reasoning: motion-aware logging, adaptive temporal sampling, track maintenance,
+            predicted states during occlusion, and the handoff from compact structured perception to
+            large-model cognitive inference. This slot should visually reinforce why RailVQA-CoM is more
+            efficient and more controllable than naive end-to-end multimodal inference.
+          </p>
+        </div>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-tag">Module 01</div>
+          <div class="timeline-body">
+            <h3>Perception Module</h3>
+            <p>
+              Lightweight detectors or task-specialized visual models extract objects, signals, track conditions,
+              and other scene primitives from dense cab-view input, offloading high-frequency low-level analysis
+              away from the large model.
+            </p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-tag">Module 02</div>
+          <div class="timeline-body">
+            <h3>Motion Analysis &amp; Memory Log</h3>
+            <p>
+              Temporal object states are transformed into structured logs that describe motion direction,
+              displacement, velocity tendency, and persistent track identity. The paper also emphasizes
+              occlusion handling and extrapolated states to preserve temporal continuity in difficult scenes.
+            </p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-tag">Module 03</div>
+          <div class="timeline-body">
+            <h3>Cognitive Inference Module</h3>
+            <p>
+              The LMM receives selected keyframes, user query, and the semantic log, then performs
+              higher-level railway reasoning — generating structured perception, reasoning, planning, and
+              final-answer outputs that are far more interpretable than direct black-box video QA.
+            </p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-tag">Efficiency</div>
+          <div class="timeline-body">
+            <h3>Adaptive Temporal Sampling &amp; Context Compression</h3>
+            <p>
+              Rather than feeding every frame to the LMM, the framework prioritizes motion-salient moments.
+              This reduces context dilution, cuts computational overhead, and improves response latency in
+              dynamic safety-critical scenarios.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== VIDEOS ===================== -->
+  <section id="videos">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-title">
+          <div class="section-kicker">Demo Videos</div>
+          <h2>Dual-column video area preserved for future insertion</h2>
+          <p>
+            As requested, the video section remains in a two-column layout. You can keep these blank placeholders
+            for now, or directly replace them with your final demo clips later. The overall visual structure is
+            intentionally kept close to the reference style.
+          </p>
+        </div>
+        <div class="section-note">
+          Video layout intentionally kept unchanged and in dual-column format.
+        </div>
+      </div>
 
       <div class="video-grid">
         <div class="video-card">
-          <div class="video-box">
-            Video Placeholder A (16:9)
+          <div class="video-top">
+            <h3>Demo Video I · Static Scene Reasoning</h3>
+            <span>16:9 Placeholder</span>
           </div>
-          <div class="video-meta">
-            <h4>Demo A — Dynamic Intrusion & Tracking</h4>
-            <p>Recommended for showcasing multi-object tracking, motion logging, and emergency hazard reasoning.</p>
+          <div class="video-box">
+            <!-- 如果已有视频，取消下面 video 标签注释并替换文件名 -->
+            <!--
+            <video controls>
+              <source src="demo1.mp4" type="video/mp4">
+            </video>
+            -->
+            <span>Reserved for demo1.mp4</span>
           </div>
         </div>
 
         <div class="video-card">
+          <div class="video-top">
+            <h3>Demo Video II · Dynamic Hazard Reasoning</h3>
+            <span>16:9 Placeholder</span>
+          </div>
           <div class="video-box">
-            Video Placeholder B (16:9)
-          </div>
-          <div class="video-meta">
-            <h4>Demo B — Zero-Shot Anomaly Fallback</h4>
-            <p>Recommended for showcasing out-of-distribution obstacle detection and LMM fallback reasoning.</p>
+            <!-- 如果已有视频，取消下面 video 标签注释并替换文件名 -->
+            <!--
+            <video controls>
+              <source src="demo2.mp4" type="video/mp4">
+            </video>
+            -->
+            <span>Reserved for demo2.mp4</span>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- FIGURE 1 -->
-  <section>
+  <!-- ===================== RESULTS ===================== -->
+  <section id="results">
     <div class="container">
-      <h2 class="section-title">Method Overview</h2>
-
-      <div class="figure-block">
-        <div class="figure-shell wide">
-          <div class="figure-frame large">
-            <div class="placeholder-inner">
-              <div class="placeholder-tag">FIGURE 1 PLACEHOLDER</div>
-              <div class="placeholder-title">RailVQA-CoM Overall Architecture</div>
-              <div class="placeholder-desc">
-                Reserve this area for <strong>Paper Figure 1</strong>.<br>
-                Suggested content: overall collaborative large–small model framework,
-                including the Small-Model Perception Module, Motion Analysis & Memory Log Module,
-                and Large Model Cognitive Inference Module.
-              </div>
-            </div>
-          </div>
+      <div class="section-head">
+        <div class="section-title">
+          <div class="section-kicker">Qualitative Results</div>
+          <h2>Case studies reveal transparent reasoning under difficult railway hazards</h2>
+          <p>
+            Beyond benchmark metrics, the paper highlights qualitative examples that show how RailVQA-CoM
+            preserves temporal continuity during occlusion, and how it can still fall back to zero-shot
+            visual reasoning when the small detector misses out-of-distribution obstacles.
+          </p>
         </div>
-
-        <div class="figure-caption">
-          <p><strong>Fig. 1. Overview of the proposed RailVQA-CoM framework.</strong> This figure should serve as the central method illustration of the project page and visually summarize the full collaborative reasoning pipeline for automatic train operation scenarios. Compared with conventional end-to-end perception pipelines, RailVQA-CoM explicitly decomposes the decision-making process into lightweight front-end perception, temporal motion understanding, and high-level structured cognition.</p>
-          <p>More specifically, the figure is recommended to emphasize the interaction among three tightly coupled modules: (1) a small-model perception module responsible for efficient object detection, scene parsing, and target extraction in railway cab-view observations; (2) a motion analysis and memory log module that accumulates temporal evidence across frames, tracks dynamic entities, and organizes compact state descriptors for later reasoning; and (3) a large-model cognitive inference module that consumes structured visual evidence and produces interpretable outputs in the form of perception-level understanding, reasoning chains, planning suggestions, and final safety-aware answers.</p>
-          <p>This section should visually communicate the key design philosophy of RailVQA: using structured intermediate representations to reduce hallucination, improve explainability, and make multimodal reasoning more reliable for safety-critical train control tasks.</p>
+        <div class="section-note">
+          Figure slot below is reserved for the paper’s qualitative results figure.
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- FIGURE 2 -->
-  <section>
-    <div class="container">
-      <h2 class="section-title">Benchmark Task Formulation</h2>
-
-      <div class="figure-block">
-        <div class="figure-shell">
-          <div class="figure-frame large">
-            <div class="placeholder-inner">
-              <div class="placeholder-tag">FIGURE 2 PLACEHOLDER</div>
-              <div class="placeholder-title">RailVQA-bench Dual-Task Schema</div>
-              <div class="placeholder-desc">
-                Reserve this area for <strong>Paper Figure 2</strong>.<br>
-                Suggested content: Static Single-frame VQA + Dynamic Multi-frame VQA,
-                with structured output format <em>{Cperc, Creas, Cplan, Afinal}</em>.
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="figure-caption">
-          <p><strong>Fig. 2. Task formulation of RailVQA-bench.</strong> This figure is recommended to present the unified benchmark design that distinguishes between two complementary but closely related railway cognition tasks: static single-frame visual question answering and dynamic multi-frame visual question answering. Together, these two settings cover both instantaneous scene interpretation and temporally extended safety reasoning.</p>
-          <p>For the static task, the benchmark focuses on questions that can be answered from a single cab-view image, such as signal recognition, track status judgment, scene compliance analysis, and infrastructure-aware semantic understanding. For the dynamic task, the benchmark introduces sequential visual evidence, enabling questions related to motion trend analysis, intruder evolution, object approach/retreat behavior, collision risk anticipation, and temporal hazard assessment.</p>
-          <p>Importantly, the figure should also highlight the structured output design of RailVQA-bench. Instead of evaluating only a final textual answer, the benchmark expects a four-part response structure—visual perception summary, explicit reasoning chain, planning-oriented interpretation, and final answer—thereby encouraging interpretable cognition and making the evaluation protocol more aligned with real-world ATO safety requirements.</p>
+      <!-- FIGURE 6 -->
+      <div class="figure-wrap">
+        <div class="paper-figure">
+          <img src="fig6.png" alt="RailVQA Figure 6" class="paper-image">
+          <p class="figure-caption">
+            <strong>Figure 6 (Reserved: RailVQA Paper Fig.6).</strong>
+            Place the qualitative results figure here. This slot is intended for the paper’s case-study panel,
+            which includes examples such as <em>dynamic intrusion with multi-object tracking</em> and
+            <em>zero-shot anomaly detection with defensive fallback</em>. It is ideal for the final section because
+            it demonstrates how the framework maintains interpretable step-by-step reasoning even when detections
+            are partially missing, temporally unstable, or out-of-distribution — precisely the kind of robustness
+            expected in safety-critical automatic train operation.
+          </p>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- CORE IDEA -->
-  <section>
-    <div class="container">
       <div class="two-col">
-        <div>
-          <h2 class="section-title" style="text-align:left;">Core Idea</h2>
-          <div class="paper-card">
-            <p style="margin-bottom:14px;">
-              RailVQA addresses a critical gap in Automatic Train Operation (ATO): existing railway vision datasets
-              and methods mainly emphasize low-level perception, but lack support for <strong>high-level reasoning,
-              planning, and interpretable safety cognition</strong>.
-            </p>
-            <p style="margin-bottom:14px;">
-              To solve this, the project contributes two tightly coupled parts:
-              <strong>RailVQA-bench</strong>, a benchmark for both static and dynamic railway visual reasoning, and
-              <strong>RailVQA-CoM</strong>, a collaborative large–small model framework that improves efficiency,
-              reduces hallucination, and preserves transparent reasoning steps.
-            </p>
-            <p>
-              The framework is especially suited for safety-critical scenarios such as signal compliance,
-              track intrusion, collision risk assessment, and defensive fallback under detector uncertainty.
-            </p>
+        <div class="content-card">
+          <h3>Case Study A · Dynamic Intrusion &amp; Track Continuity</h3>
+          <p>
+            In the qualitative examples, the framework tracks pedestrians crossing or moving along railway areas,
+            preserving spatial-temporal understanding even when some detections are transiently lost.
+          </p>
+          <ul>
+            <li>Maintains object identity over time</li>
+            <li>Handles temporary occlusion with predicted states</li>
+            <li>Preserves motion direction and hazard trend for LMM reasoning</li>
+            <li>Supports emergency action recommendation from explicit temporal evidence</li>
+          </ul>
+        </div>
+
+        <div class="content-card">
+          <h3>Case Study B · Zero-shot Anomaly &amp; Defensive Fallback</h3>
+          <p>
+            When the small detector fails to identify an out-of-distribution obstacle, the framework can trigger
+            a fallback path that reduces trust in the unreliable log and lets the LMM rely more directly on visual grounding.
+          </p>
+          <ul>
+            <li>Improves robustness against detector miss or domain shift</li>
+            <li>Mitigates over-reliance on imperfect middleware output</li>
+            <li>Still produces structured safety reasoning instead of opaque responses</li>
+            <li>Highlights practical resilience for rare but safety-critical corner cases</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== IMPACT / CONCLUSION ===================== -->
+  <section id="impact">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-title">
+          <div class="section-kicker">Conclusion</div>
+          <h2>A strong foundation for railway-native multimodal cognition research</h2>
+          <p>
+            RailVQA does more than introduce a dataset — it defines a research direction. By explicitly coupling
+            benchmark design, structured reasoning evaluation, and efficient large–small model collaboration, the
+            work provides a practical path toward trustworthy, train-specific visual intelligence for automatic operation.
+          </p>
+        </div>
+        <div class="section-note">
+          This closing section mirrors the long-form explanatory rhythm of research project landing pages.
+        </div>
+      </div>
+
+      <div class="glass-card" style="padding:28px;">
+        <div class="two-col" style="margin-top:0;">
+          <div class="content-card" style="background:rgba(255,255,255,0.02);">
+            <h3>What RailVQA contributes</h3>
+            <ul>
+              <li>The first railway-specific VQA benchmark for ATO cab-view cognition</li>
+              <li>Explicit evaluation of both static rule compliance and dynamic kinematic hazard reasoning</li>
+              <li>A structured CoT-style output protocol for interpretable assessment</li>
+              <li>A practical collaborative framework that improves efficiency without sacrificing cognition</li>
+            </ul>
+          </div>
+
+          <div class="content-card" style="background:rgba(255,255,255,0.02);">
+            <h3>Why this website layout works</h3>
+            <ul>
+              <li>Follows an OpenNav-like rhythm: hero → overview → centered features → method → demos → results</li>
+              <li>Keeps figure scale moderate, matching research landing page proportions</li>
+              <li>Leaves image and video slots ready for direct insertion</li>
+              <li>Optimized for later expansion into a full project page with code / paper / GitHub buttons</li>
+            </ul>
           </div>
         </div>
-
-        <div>
-          <h2 class="section-title" style="text-align:left;">Highlights</h2>
-          <div class="metric-grid">
-            <div class="metric">
-              <div class="value">20,000</div>
-              <div class="label">Single-frame QA pairs</div>
-            </div>
-            <div class="metric">
-              <div class="value">1,168</div>
-              <div class="label">Video-based QA pairs</div>
-            </div>
-            <div class="metric">
-              <div class="value">4-stage</div>
-              <div class="label">Structured CoT outputs</div>
-            </div>
-            <div class="metric">
-              <div class="value">Plug-and-Play</div>
-              <div class="label">LMM integration design</div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </section>
 
-  <!-- FIGURE 4 -->
-  <section>
+  <!-- ===================== FOOTER ===================== -->
+  <footer>
     <div class="container">
-      <h2 class="section-title">Detailed Pipeline / Framework Components</h2>
-
-      <div class="figure-block">
-        <div class="figure-shell narrow">
-          <div class="figure-frame medium">
-            <div class="placeholder-inner">
-              <div class="placeholder-tag">FIGURE 4 PLACEHOLDER</div>
-              <div class="placeholder-title">Detailed Pipeline Visualization</div>
-              <div class="placeholder-desc">
-                Reserve this area for <strong>Paper Figure 4</strong>.<br>
-                Suggested placement: the detailed workflow of perception, tracking,
-                motion analysis, adaptive temporal sampling, memory log construction,
-                and LMM structured inference.
-              </div>
-            </div>
-          </div>
+      <div class="footer-grid">
+        <div class="footer-left">
+          <h3>RailVQA Paper Website Template</h3>
+          <p>
+            This page is structured to visually approximate the OpenNav-style research website layout while being
+            customized for the RailVQA paper. Replace <strong>fig1.png / fig2.png / fig4.png / fig6.png</strong>
+            and optionally <strong>demo1.mp4 / demo2.mp4</strong> in the same folder as this HTML file to complete the page.
+          </p>
         </div>
 
-        <div class="figure-caption">
-          <p><strong>Fig. 4. Detailed pipeline of the proposed inference process.</strong> This figure should act as the “zoomed-in” complement to Fig. 1, revealing the internal data flow and intermediate representations that make RailVQA-CoM both efficient and interpretable. In the project page, it is recommended to use this section to explicitly demonstrate how raw visual observations are transformed into structured reasoning-ready evidence.</p>
-          <p>A suitable visual emphasis here would include the full path from frame acquisition and lightweight detection, to object association and motion estimation, followed by adaptive temporal sampling and memory log generation. These compact structured logs are then passed into the LMM reasoning module, which performs higher-level cognition without directly relying on dense raw video input, thereby significantly improving efficiency and reducing redundant multimodal token consumption.</p>
-          <p>From a design perspective, this figure is particularly important because it shows that RailVQA-CoM is not simply an LMM-over-video solution. Instead, it is a layered framework that uses small models to stabilize perception and uses structured temporal abstraction to make large-model reasoning more focused, more controllable, and more suitable for deployment in resource-constrained or latency-sensitive railway systems.</p>
+        <div class="footer-links">
+          <a href="#top">Back to Top</a>
+          <a href="#overview">Overview</a>
+          <a href="#framework">Framework</a>
+          <a href="#results">Results</a>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- QUALITATIVE -->
-  <section>
-    <div class="container">
-      <h2 class="section-title">Qualitative Reasoning Cases</h2>
-      <p class="section-subtitle">
-        This section highlights how the framework preserves interpretable step-by-step reasoning in dynamic railway scenes,
-        including target occlusion handling and defensive fallback for unseen obstacles.
-      </p>
-    </div>
-  </section>
-
-  <!-- FIGURE 6 -->
-  <section>
-    <div class="container">
-      <div class="figure-block">
-        <div class="figure-shell">
-          <div class="figure-frame large">
-            <div class="placeholder-inner">
-              <div class="placeholder-tag">FIGURE 6 PLACEHOLDER</div>
-              <div class="placeholder-title">Qualitative Results of RailVQA-CoM</div>
-              <div class="placeholder-desc">
-                Reserve this area for <strong>Paper Figure 6</strong>.<br>
-                Suggested content:
-                <br>• Case 1: Dynamic intrusion with multi-object tracking and predicted states
-                <br>• Case 2: Zero-shot anomaly detection with defensive fallback reasoning
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="figure-caption">
-          <p><strong>Fig. 6. Qualitative case studies of RailVQA-CoM.</strong> This section is best presented as a two-case visual comparison that demonstrates not only the correctness of final answers but also the practical value of structured intermediate reasoning. It is recommended to preserve the original dual-panel organization so that viewers can quickly understand the diversity of scenarios handled by the framework.</p>
-          <p>In the first case, the page should emphasize dynamic intrusion understanding: multiple objects or workers appearing near the track, temporally evolving spatial relations, and the framework’s ability to maintain target consistency through tracking and predicted state estimation. This example should clearly illustrate how the system uses temporal evidence to judge whether a hazard is transient, approaching, or persistent, which is crucial for proactive safety planning.</p>
-          <p>In the second case, the figure should focus on zero-shot anomaly handling and uncertainty-aware fallback reasoning. When the front-end detector fails to confidently classify an unusual obstacle, RailVQA-CoM can still leverage broader visual cues and high-level reasoning to infer potential risk and recommend conservative action. This example is especially important because it demonstrates the framework’s robustness under out-of-distribution conditions, which are common in real-world railway environments but often overlooked in conventional benchmark settings.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CONTRIBUTIONS -->
-  <section>
-    <div class="container">
-      <h2 class="section-title">Main Contributions</h2>
-      <div class="paper-card">
-        <ul style="padding-left:1.2rem; line-height:1.9;">
-          <li style="margin-bottom:12px;">
-            <strong>Benchmark Contribution:</strong> Introduces the first VQA benchmark for cab-view visual cognition in ATO,
-            covering both static rule-compliance reasoning and dynamic kinematic hazard reasoning.
-          </li>
-          <li style="margin-bottom:12px;">
-            <strong>Evaluation Contribution:</strong> Establishes a structured reasoning-centric evaluation setting that
-            shifts emphasis from pure perception accuracy to interpretable cognition.
-          </li>
-          <li>
-            <strong>Framework Contribution:</strong> Proposes RailVQA-CoM, a collaborative large–small model framework
-            for efficient and reliable decision-oriented visual understanding in railway automation.
-          </li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- BIBTEX -->
-  <section>
-    <div class="container">
-      <h2 class="section-title">BibTeX</h2>
-      <div class="code-block">
-@article{railvqa2026,
-  title={RailVQA: A Benchmark and Framework for Efficient Interpretable Visual Cognition in Automatic Train Operation},
-  author={Zhang, Sen and Li, Runmei and Zheng, Zhichao and Zhang, Yuhe and Li, Jiani and Zhang, Kailun and Zhang, Tao and Wu, Wenjun and Wang, Qunbo},
-  year={2026},
-  note={Replace with official BibTeX entry when available}
-}
-      </div>
-    </div>
-  </section>
-
-  <footer class="footer">
-    <div class="container">
-      This project page is styled in the spirit of the OpenNav academic website layout, with placeholders prepared for RailVQA paper figures and videos.
     </div>
   </footer>
 
