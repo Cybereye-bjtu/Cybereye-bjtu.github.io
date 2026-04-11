@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>豆包样式复刻 - 智能问答</title>
+    <!-- 引入FontAwesome图标库（丰富图标） -->
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* 全局重置 */
         * {
@@ -39,6 +41,13 @@
             color: #111827;
             border-bottom: 1px solid #e5e7eb;
             margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-title i {
+            color: #2563eb;
         }
 
         /* 新对话按钮 - 位置在标题下方 */
@@ -61,8 +70,7 @@
             background-color: #f3f4f6;
         }
 
-        .new-chat-btn::before {
-            content: "+";
+        .new-chat-btn i {
             font-size: 16px;
             font-weight: 600;
             color: #6b7280;
@@ -81,13 +89,25 @@
             font-size: 12px;
             color: #6b7280;
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        /* 历史对话列表 */
+        /* 历史对话列表 - 滚动加载相关 */
         .history-list {
             flex: 1;
             overflow-y: auto;
             padding: 0 4px;
+        }
+
+        .history-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb {
+            background-color: #d1d5db;
+            border-radius: 2px;
         }
 
         /* 历史记录空状态 */
@@ -103,12 +123,9 @@
             text-align: center;
         }
 
-        .history-empty-icon {
-            width: 48px;
-            height: 48px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d1d5db' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'%3E%3C/path%3E%3C/svg%3E");
-            background-size: 48px 48px;
-            background-repeat: no-repeat;
+        .history-empty i {
+            font-size: 48px;
+            color: #d1d5db;
             margin-bottom: 16px;
         }
 
@@ -121,7 +138,7 @@
             color: #d1d5db;
         }
 
-        /* 历史项样式 */
+        /* 历史项样式 - 新增右键菜单/删除功能 */
         .history-item {
             padding: 6px 8px;
             border-radius: 6px;
@@ -147,32 +164,63 @@
             color: #2563eb;
         }
 
-        .history-item::before {
-            content: "";
+        .history-item i {
+            font-size: 14px;
+            color: #6b7280;
             width: 16px;
-            height: 16px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'%3E%3C/path%3E%3C/svg%3E");
-            background-size: 16px 16px;
-            background-repeat: no-repeat;
+            text-align: center;
         }
 
-        .history-item.active::before {
-            stroke: #2563eb;
+        .history-item.active i {
+            color: #2563eb;
         }
 
-        .history-item::after {
-            content: "";
-            width: 16px;
-            height: 16px;
+        .history-item .history-delete {
             position: absolute;
             right: 8px;
             opacity: 0;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='1'%3E%3C/circle%3E%3Ccircle cx='12' cy='6' r='1'%3E%3C/circle%3E%3Ccircle cx='12' cy='18' r='1'%3E%3C/circle%3E%3C/svg%3E");
-            background-size: 16px 16px;
+            color: #9ca3af;
+            cursor: pointer;
+            transition: opacity 0.2s;
         }
 
-        .history-item:hover::after {
+        .history-item:hover .history-delete {
             opacity: 1;
+        }
+
+        .history-item .history-delete:hover {
+            color: #b91c1c;
+        }
+
+        /* 右键菜单样式 */
+        .context-menu {
+            position: absolute;
+            width: 120px;
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none;
+        }
+
+        .context-menu-item {
+            padding: 6px 12px;
+            font-size: 13px;
+            color: #111827;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .context-menu-item:hover {
+            background-color: #f3f4f6;
+        }
+
+        .context-menu-item i {
+            font-size: 12px;
+            color: #6b7280;
         }
 
         /* 右侧主内容区 */
@@ -226,11 +274,9 @@
             background-color: #f3f4f6;
         }
 
-        .header-action-icon {
-            width: 18px;
-            height: 18px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 8v6l-4 4M2 8l10.75 10.75c.8.8 2 .8 2.8 0l1.6-1.6c.8-.8.8-2 0-2.8L12 8'/%3E%3C/svg%3E");
-            background-size: 18px 18px;
+        .header-action i {
+            font-size: 18px;
+            color: #6b7280;
         }
 
         /* 聊天内容区 - 优化填充：增加默认欢迎语 */
@@ -251,6 +297,7 @@
             border: 1px solid #e5e7eb;
             border-radius: 12px;
             background-color: #f9fafb;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .welcome-title {
@@ -258,6 +305,13 @@
             font-weight: 600;
             color: #111827;
             margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .welcome-title i {
+            color: #2563eb;
         }
 
         .welcome-desc {
@@ -282,6 +336,14 @@
             color: #4b5563;
             cursor: pointer;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .welcome-tip-item i {
+            font-size: 12px;
+            color: #6b7280;
         }
 
         .welcome-tip-item:hover {
@@ -290,7 +352,11 @@
             color: #2563eb;
         }
 
-        /* 消息气泡 */
+        .welcome-tip-item:hover i {
+            color: #2563eb;
+        }
+
+        /* 消息气泡 - 优化样式（阴影/圆角/图标） */
         .message {
             margin-bottom: 16px;
             max-width: 85%;
@@ -298,24 +364,91 @@
             border-radius: 18px;
             line-height: 1.6;
             word-wrap: break-word;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* 新增阴影 */
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .message-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .message-avatar i {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .user-message .message-avatar {
+            background-color: #2563eb;
+        }
+
+        .user-message .message-avatar i {
+            color: #ffffff;
+        }
+
+        .message-content {
+            flex: 1;
         }
 
         .user-message {
             background-color: #2563eb;
             color: #ffffff;
             margin-left: auto;
+            border-bottom-right-radius: 4px; /* 优化气泡圆角 */
         }
 
         .bot-message {
             background-color: #f9fafb;
             color: #111827;
             border: 1px solid #e5e7eb;
+            border-bottom-left-radius: 4px; /* 优化气泡圆角 */
         }
 
         .error-message {
             background-color: #fef2f2;
             color: #b91c1c;
             border: 1px solid #fecdd3;
+            border-bottom-left-radius: 4px;
+        }
+
+        /* 加载动画样式 */
+        .loading-dots {
+            display: flex;
+            gap: 4px;
+            padding: 4px 0;
+        }
+
+        .loading-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #6b7280;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .loading-dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .loading-dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1);
+            }
         }
 
         /* 底部输入区 - 新增知识图谱按钮 */
@@ -329,24 +462,31 @@
 
         .input-box {
             display: flex;
-            align-items: center;
+            align-items: flex-end; /* 适配输入框高度 */
             background-color: #ffffff;
             border: 1px solid #e5e7eb;
             border-radius: 24px;
             padding: 8px 12px;
             margin-bottom: 8px;
+            transition: border-color 0.2s;
+        }
+
+        .input-box:focus-within {
+            border-color: #2563eb;
         }
 
         #question-input {
             flex: 1;
             border: none;
             outline: none;
-            resize: none;
-            height: 40px;
+            resize: none; /* 禁用手动调整 */
+            min-height: 40px; /* 最小高度 */
+            max-height: 200px; /* 最大高度 */
             padding: 5px;
             font-size: 14px;
             color: #111827;
             background-color: transparent;
+            line-height: 1.5;
         }
 
         .send-btn {
@@ -361,14 +501,15 @@
             align-items: center;
             justify-content: center;
             transition: background-color 0.2s;
+            flex-shrink: 0;
+            margin-left: 8px;
         }
 
         .send-btn:hover {
             background-color: #1d4ed8;
         }
 
-        .send-btn::after {
-            content: "↑";
+        .send-btn i {
             font-size: 16px;
         }
 
@@ -390,15 +531,13 @@
             background-color: #f3f4f6;
         }
 
-        .kg-icon {
-            width: 16px;
-            height: 16px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z'/%3E%3Cpolyline points='3.27 6.96 12 12.01 20.73 6.96'/%3E%3Cline x1='12' y1='22.08' x2='12' y2='12'/%3E%3C/svg%3E");
-            background-size: 16px 16px;
+        .kg-toggle i {
+            font-size: 16px;
+            color: #6b7280;
         }
 
-        .kg-toggle.active .kg-icon {
-            stroke: #2563eb;
+        .kg-toggle.active i {
+            color: #2563eb;
         }
 
         .kg-toggle.active {
@@ -420,6 +559,20 @@
             color: #111827;
             display: none;
             z-index: 999;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* 加载更多提示 */
+        .load-more {
+            text-align: center;
+            padding: 8px;
+            font-size: 12px;
+            color: #9ca3af;
+            display: none;
+        }
+
+        .load-more.show {
+            display: block;
         }
     </style>
 </head>
@@ -427,18 +580,41 @@
     <!-- 左侧侧边栏（调整标题位置+新增顶部标题） -->
     <div class="sidebar">
         <!-- 新增：侧边栏左上角标题 -->
-        <div class="sidebar-title">答而有据 · 智能问答</div>
-        <div class="new-chat-btn" onclick="newChat()">新对话</div>
+        <div class="sidebar-title">
+            <i class="fas fa-robot"></i>
+            答而有据 · 智能问答
+        </div>
+        <div class="new-chat-btn" onclick="newChat()">
+            <i class="fas fa-plus"></i>
+            新对话
+        </div>
         <!-- 历史对话容器（包含标题+列表/空状态） -->
         <div class="history-container">
-            <div class="history-title">历史对话</div>
-            <div class="history-list" id="history-list"></div>
+            <div class="history-title">
+                <i class="fas fa-history"></i>
+                历史对话
+            </div>
+            <!-- 加载更多提示 -->
+            <div class="load-more" id="load-more">加载更多...</div>
+            <div class="history-list" id="history-list" onscroll="handleHistoryScroll()"></div>
             <!-- 历史记录空状态 -->
             <div class="history-empty" id="history-empty">
-                <div class="history-empty-icon"></div>
+                <i class="fas fa-comment-slash"></i>
                 <div class="history-empty-text">暂无历史对话</div>
                 <div class="history-empty-tip">发送消息后将显示在这里</div>
             </div>
+        </div>
+    </div>
+
+    <!-- 右键菜单 -->
+    <div class="context-menu" id="context-menu">
+        <div class="context-menu-item" onclick="renameHistory()">
+            <i class="fas fa-edit"></i>
+            重命名
+        </div>
+        <div class="context-menu-item" onclick="deleteHistory()">
+            <i class="fas fa-trash"></i>
+            删除
         </div>
     </div>
 
@@ -453,7 +629,7 @@
                     <div class="header-subtitle">内容由豆包 AI 生成</div>
                 </div>
                 <div class="header-action">
-                    <div class="header-action-icon"></div>
+                    <i class="fas fa-share-alt"></i>
                 </div>
             </div>
         </div>
@@ -462,14 +638,26 @@
         <div class="chat-container" id="chat-container">
             <!-- 新增：默认欢迎语（无消息时显示） -->
             <div class="welcome-card" id="welcome-card">
-                <div class="welcome-title">你好！我是智能问答助手</div>
+                <div class="welcome-title">
+                    <i class="fas fa-hand-wave"></i>
+                    你好！我是智能问答助手
+                </div>
                 <div class="welcome-desc">
                     我可以解答你的各类问题，支持知识图谱增强回答，点击下方示例快速体验，或直接输入你的问题。
                 </div>
                 <div class="welcome-tips">
-                    <div class="welcome-tip-item" onclick="quickAsk('如何优化网页加载速度？')">如何优化网页加载速度？</div>
-                    <div class="welcome-tip-item" onclick="quickAsk('知识图谱的应用场景有哪些？')">知识图谱的应用场景有哪些？</div>
-                    <div class="welcome-tip-item" onclick="quickAsk('如何对接后端API？')">如何对接后端API？</div>
+                    <div class="welcome-tip-item" onclick="quickAsk('如何优化网页加载速度？')">
+                        <i class="fas fa-bolt"></i>
+                        如何优化网页加载速度？
+                    </div>
+                    <div class="welcome-tip-item" onclick="quickAsk('知识图谱的应用场景有哪些？')">
+                        <i class="fas fa-project-diagram"></i>
+                        知识图谱的应用场景有哪些？
+                    </div>
+                    <div class="welcome-tip-item" onclick="quickAsk('如何对接后端API？')">
+                        <i class="fas fa-code"></i>
+                        如何对接后端API？
+                    </div>
                 </div>
             </div>
         </div>
@@ -478,11 +666,13 @@
         <div class="input-area">
             <div class="input-box">
                 <textarea id="question-input" placeholder="输入你的问题..."></textarea>
-                <button class="send-btn" onclick="sendMessage()"></button>
+                <button class="send-btn" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
             </div>
             <!-- 新增：知识图谱开关按钮（复刻豆包上传文件样式） -->
             <div class="kg-toggle" id="kg-toggle" onclick="toggleKG()">
-                <div class="kg-icon"></div>
+                <i class="fas fa-database"></i>
                 <div class="kg-text">使用知识图谱</div>
             </div>
         </div>
@@ -497,6 +687,11 @@
         let currentChat = { question: "", answer: "" }; // 当前对话
         let pollController = null; // 轮询控制器（用于终止后端请求）
         let useKG = false; // 新增：知识图谱开关状态
+        // 滚动加载相关
+        let historyPage = 1; // 当前加载页数
+        const historyPageSize = 10; // 每页加载条数
+        let isLoadingHistory = false; // 是否正在加载历史
+        let currentRightClickId = null; // 右键点击的历史ID
 
         // ===================== 本地存储（历史记录） =====================
         // 获取历史记录
@@ -523,34 +718,118 @@
             renderHistory(); // 刷新历史列表
         }
 
-        // 渲染历史列表（控制空状态显示/隐藏）
+        // 删除单条历史
+        function deleteHistoryItem(id) {
+            let history = getHistory();
+            history = history.filter(item => item.id !== id);
+            localStorage.setItem("chatHistory", JSON.stringify(history));
+            // 如果删除的是当前激活的记录，清空聊天区
+            if (id === activeHistoryId) {
+                activeHistoryId = null;
+                document.getElementById("chat-container").innerHTML = "";
+                document.getElementById("welcome-card").style.display = "block";
+            }
+            renderHistory(); // 刷新列表
+            showToast("已删除该历史记录");
+        }
+
+        // 重命名历史记录
+        function renameHistoryItem(id) {
+            const history = getHistory();
+            const item = history.find(item => item.id === id);
+            if (!item) return;
+            const newName = prompt("请输入新的对话名称：", item.question);
+            if (newName && newName.trim()) {
+                item.question = newName.trim();
+                localStorage.setItem("chatHistory", JSON.stringify(history));
+                renderHistory();
+                showToast("已重命名对话");
+            }
+        }
+
+        // 渲染历史列表（控制空状态显示/隐藏 + 滚动加载）
         function renderHistory() {
             const historyList = document.getElementById("history-list");
             const historyEmpty = document.getElementById("history-empty");
+            const loadMore = document.getElementById("load-more");
             const history = getHistory();
             
             // 有历史记录：显示列表，隐藏空状态
             if (history.length > 0) {
                 historyList.style.display = "block";
                 historyEmpty.style.display = "none";
-                historyList.innerHTML = "";
                 
-                history.forEach(item => {
+                // 计算需要加载的记录
+                const start = (historyPage - 1) * historyPageSize;
+                const end = start + historyPageSize;
+                const renderItems = history.slice(start, end);
+                
+                // 首次加载清空列表，后续加载追加
+                if (historyPage === 1) {
+                    historyList.innerHTML = "";
+                }
+                
+                // 渲染当前页记录
+                renderItems.forEach(item => {
                     const itemEl = document.createElement("div");
                     itemEl.className = `history-item ${activeHistoryId === item.id ? "active" : ""}`;
                     itemEl.dataset.id = item.id;
                     // 超长文本省略（28字）
-                    itemEl.innerText = item.question.length > 28 
+                    const displayText = item.question.length > 28 
                         ? item.question.substring(0, 28) + "..." 
                         : item.question;
-                    // 点击加载历史对话
-                    itemEl.onclick = () => loadHistoryChat(item);
+                    
+                    itemEl.innerHTML = `
+                        <i class="fas fa-comment"></i>
+                        <span class="history-text">${displayText}</span>
+                        <i class="fas fa-trash history-delete" onclick="deleteHistoryItem('${item.id}')"></i>
+                    `;
+                    
+                    // 左键点击加载历史对话
+                    itemEl.addEventListener("click", (e) => {
+                        if (e.target.classList.contains("history-delete")) return; // 避免删除时触发加载
+                        loadHistoryChat(item);
+                    });
+                    
+                    // 右键菜单
+                    itemEl.addEventListener("contextmenu", (e) => {
+                        e.preventDefault();
+                        currentRightClickId = item.id;
+                        const menu = document.getElementById("context-menu");
+                        menu.style.display = "block";
+                        menu.style.left = `${e.pageX}px`;
+                        menu.style.top = `${e.pageY}px`;
+                    });
+                    
                     historyList.appendChild(itemEl);
                 });
+                
+                // 显示/隐藏加载更多
+                loadMore.classList.toggle("show", end < history.length);
+                isLoadingHistory = false;
             } else {
                 // 无历史记录：隐藏列表，显示空状态
                 historyList.style.display = "none";
                 historyEmpty.style.display = "flex";
+                loadMore.classList.remove("show");
+            }
+        }
+
+        // 处理历史列表滚动加载
+        function handleHistoryScroll() {
+            const historyList = document.getElementById("history-list");
+            const loadMore = document.getElementById("load-more");
+            // 滚动到底部且有更多数据时加载
+            if (
+                !isLoadingHistory &&
+                loadMore.classList.contains("show") &&
+                historyList.scrollTop + historyList.clientHeight >= historyList.scrollHeight - 20
+            ) {
+                isLoadingHistory = true;
+                historyPage++;
+                setTimeout(() => { // 模拟加载延迟
+                    renderHistory();
+                }, 300);
             }
         }
 
@@ -568,6 +847,28 @@
             // 更新当前对话状态
             currentChat = { question: item.question, answer: item.answer };
         }
+
+        // ===================== 历史记录右键菜单 =====================
+        // 重命名历史
+        function renameHistory() {
+            if (currentRightClickId) {
+                renameHistoryItem(currentRightClickId);
+            }
+            document.getElementById("context-menu").style.display = "none";
+        }
+
+        // 删除历史
+        function deleteHistory() {
+            if (currentRightClickId) {
+                deleteHistoryItem(currentRightClickId);
+            }
+            document.getElementById("context-menu").style.display = "none";
+        }
+
+        // 点击空白处关闭右键菜单
+        document.addEventListener("click", () => {
+            document.getElementById("context-menu").style.display = "none";
+        });
 
         // ===================== 新增功能：知识图谱开关 =====================
         function toggleKG() {
@@ -594,8 +895,8 @@
             setTimeout(() => toast.style.display = "none", 1500);
         }
 
-        // 添加消息到聊天区（新增：隐藏欢迎语）
-        function addMessage(content, type, isError = false) {
+        // 添加消息到聊天区（新增：隐藏欢迎语 + 优化气泡）
+        function addMessage(content, type, isError = false, isLoading = false) {
             // 隐藏欢迎语
             document.getElementById("welcome-card").style.display = "none";
             
@@ -603,11 +904,42 @@
             const messageEl = document.createElement("div");
             // 消息类型：user/bot + 错误样式
             messageEl.className = `message ${type === "user" ? "user-message" : "bot-message"} ${isError ? "error-message" : ""}`;
-            messageEl.innerText = content;
+            
+            // 加载中动画
+            let contentHtml = "";
+            if (isLoading) {
+                contentHtml = `
+                    <div class="loading-dots">
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                    </div>
+                `;
+            } else {
+                contentHtml = `<div class="message-content">${content.replace(/\n/g, "<br>")}</div>`;
+            }
+            
+            // 头像图标
+            const avatarIcon = type === "user" 
+                ? '<i class="fas fa-user"></i>' 
+                : '<i class="fas fa-robot"></i>';
+            
+            messageEl.innerHTML = `
+                <div class="message-avatar">${avatarIcon}</div>
+                ${contentHtml}
+            `;
+            
             chatContainer.appendChild(messageEl);
             // 滚动到底部
             chatContainer.scrollTop = chatContainer.scrollHeight;
             return messageEl;
+        }
+
+        // 输入框自适应高度
+        function autoResizeInput() {
+            const input = document.getElementById("question-input");
+            input.style.height = "auto";
+            input.style.height = Math.min(input.scrollHeight, 200) + "px";
         }
 
         // 新建对话
@@ -628,11 +960,15 @@
             chatContainer.appendChild(document.getElementById("welcome-card"));
             document.getElementById("welcome-card").style.display = "block";
             
-            // 清空输入框
-            document.getElementById("question-input").value = "";
+            // 清空输入框并重置高度
+            const inputEl = document.getElementById("question-input");
+            inputEl.value = "";
+            autoResizeInput();
+            
             // 重置状态
             activeHistoryId = null;
             currentChat = { question: "", answer: "" };
+            historyPage = 1; // 重置分页
             renderHistory(); // 刷新历史列表（取消选中）
         }
 
@@ -643,12 +979,14 @@
             const question = inputEl.value.trim();
             if (!question) return;
 
-            // 清空输入框
+            // 清空输入框并重置高度
             inputEl.value = "";
+            autoResizeInput();
+            
             // 添加用户消息到聊天区
             addMessage(question, "user");
-            // 添加加载中消息
-            const loadingEl = addMessage("正在思考...", "bot");
+            // 添加加载中消息（动画）
+            const loadingEl = addMessage("", "bot", false, true);
             // 重置轮询控制器
             if (pollController) pollController.abort();
             pollController = new AbortController();
@@ -701,7 +1039,10 @@
 
                 // 任务被取消（点击新对话）
                 if (signal.aborted) {
-                    loadingEl.innerText = "任务已取消";
+                    loadingEl.innerHTML = `
+                        <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                        <div class="message-content">任务已取消</div>
+                    `;
                     return;
                 }
 
@@ -740,12 +1081,18 @@
 
         // 页面加载时初始化
         window.onload = function() {
-            renderHistory(); // 渲染历史记录（首次加载会判断是否显示空状态）
+            // 初始化输入框高度监听
+            const inputEl = document.getElementById("question-input");
+            inputEl.addEventListener("input", autoResizeInput);
+            // 初始化历史列表
+            renderHistory(); 
             // 回车发送消息（按住shift+回车换行）
-            document.getElementById("question-input").addEventListener("keydown", (e) => {
+            inputEl.addEventListener("keydown", (e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
                     sendMessage();
+                } else if (e.key === "Enter" && e.shiftKey) {
+                    setTimeout(autoResizeInput, 0); // 换行后调整高度
                 }
             });
         };
