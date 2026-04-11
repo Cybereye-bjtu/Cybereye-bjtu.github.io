@@ -149,6 +149,12 @@ body{
 
 .user{background:#007bff;color: #fff;margin-left:auto}
 .bot{background:#f5f5f5;color: #000;border:1px solid #e5e5e5}
+/* 错误消息样式 */
+.bot.error{
+  background:#fef2f2;
+  border-color:#fecdd3;
+  color:#b91c1c;
+}
 
 /* 输入区（GPT风格） */
 .input-wrapper{
@@ -238,6 +244,8 @@ let currentChatData = { // 存储当前未保存的对话数据
   question: "",
   result: { answer: "", reasoning: [] }
 };
+// 新增：轮询控制器，用于终止无效轮询
+let pollController = null;
 
 // ===================== 历史记录核心逻辑（复刻豆包） =====================
 function getHistoryList() {
@@ -315,14 +323,15 @@ function toggleKG(){
   showToast(useKG ? "已开启知识图谱" : "已关闭知识图谱")
 }
 
-function addMessage(content, type, md=false){
+// 新增：支持错误样式的消息添加
+function addMessage(content, type, md=false, isError=false){
   const chat = document.getElementById("chat")
   const div = document.createElement("div")
-  div.className = "message " + type
-  div.innerHTML = md ? marked.parse(content) : content
-  chat.appendChild(div)
-  chat.scrollTop = chat.scrollHeight
-  return div
+  div.className = `message ${type} ${isError ? 'error' : ''}`;
+  div.innerHTML = md ? marked.parse(content) : content;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return div;
 }
 
 // 保存历史 + 刷新列表
@@ -348,6 +357,12 @@ function render(res){
 
 // 新对话 - 先保存当前对话到历史，再清空聊天+取消选中
 function newChat(){
+  // 终止正在进行的轮询
+  if (pollController) {
+    pollController.abort();
+    pollController = null;
+  }
+  
   // 1. 保存当前未完成的对话到历史（如果有内容）
   if (currentChatData.question) {
     saveHistoryToLocal(currentChatData.question, currentChatData.result);
@@ -372,47 +387,147 @@ function newChat(){
   document.getElementById("question").value = "";
 }
 
+// 核心修改：完整的错误处理 + 超时控制 + 轮询终止
 async function send(){
   const q = document.getElementById("question").value
   if(!q) return
 
+  // 清空之前的轮询控制器
+  if (pollController) {
+    pollController.abort();
+  }
+  pollController = new AbortController();
+  const signal = pollController.signal;
+
   addMessage(q,"user")
   const loading = addMessage("推理中...","bot")
+  
+  try {
+    // 1. 创建任务 - 增加超时和错误捕获
+    let res;
+    try {
+      res = await Promise.race([
+        fetch("/api/tasks",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({
+            question:q,
+            usd_path:"/shared/usd_assets/DEMO/demo_01/scene_01/1.usd",
+            use_kg:useKG,
+            llm_model:"gemini-3-flash-preview",
+            llm_api_key:"",
+            llm_base_url:""
+          }),
+          signal: signal
+        }),
+        // 超时控制：10秒未响应则判定为超时
+        new Promise((_, reject) => setTimeout(() => reject(new Error("创建任务超时（10秒），请检查后端服务是否启动")), 10000))
+      ]);
+    } catch (err) {
+      loading.remove();
+      addMessage(`❌ 创建任务失败：${err.message}\n\n可能原因：\n1. 后端服务未启动（未执行 ./start_web_api.sh）\n2. 后端接口地址错误\n3. 网络连接问题`, "bot", false, true);
+      showToast("创建任务失败");
+      return;
+    }
 
-  const res = await fetch("/api/tasks",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
-      question:q,
-      usd_path:"/shared/usd_assets/DEMO/demo_01/scene_01/1.usd",
-      use_kg:useKG,
-      llm_model:"gemini-3-flash-preview",
-      llm_api_key:"",
-      llm_base_url:""
-    })
-  })
+    // 检查HTTP状态码
+    if (!res.ok) {
+      loading.remove();
+      const errText = await res.text().catch(() => "未知错误");
+      addMessage(`❌ 创建任务失败 [HTTP ${res.status}]\n错误信息：${errText}\n\n建议：检查后端服务日志`, "bot", false, true);
+      showToast(`创建任务失败 [HTTP ${res.status}]`);
+      return;
+    }
 
-  const data = await res.json()
-  const id = data.task_id
+    const data = await res.json();
+    const id = data.task_id;
 
-  let status="running"
-  while(status==="running"){
-    await new Promise(r=>setTimeout(r,2000))
-    const s = await fetch(`/api/tasks/${id}`)
-    const sd = await s.json()
-    status = sd.status
+    if (!id) {
+      loading.remove();
+      addMessage("❌ 创建任务失败：后端未返回有效的task_id\n\n建议：检查后端接口返回格式", "bot", false, true);
+      showToast("任务ID获取失败");
+      return;
+    }
+
+    // 2. 轮询状态 - 增加超时和错误处理
+    let status="running";
+    let pollCount = 0;
+    const maxPollCount = 30; // 最多轮询30次（60秒）
+    while(status==="running" && !signal.aborted){
+      pollCount++;
+      // 超过最大轮询次数则终止
+      if (pollCount > maxPollCount) {
+        throw new Error(`轮询超时（${maxPollCount*2}秒），任务可能卡住`);
+      }
+
+      await new Promise(r=>setTimeout(r,2000));
+      
+      let s;
+      try {
+        s = await fetch(`/api/tasks/${id}`, { signal: signal });
+      } catch (err) {
+        throw new Error(`轮询任务状态失败：${err.message}`);
+      }
+
+      if (!s.ok) {
+        throw new Error(`轮询状态失败 [HTTP ${s.status}]`);
+      }
+
+      const sd = await s.json();
+      status = sd.status;
+    }
+
+    if (signal.aborted) {
+      loading.remove();
+      addMessage("❌ 任务已被取消（点击了新对话）", "bot", false, true);
+      return;
+    }
+
+    // 3. 处理任务结果
+    if(status==="failed"){
+      loading.remove();
+      // 获取失败详情
+      let failReason = "未知原因";
+      try {
+        const failRes = await fetch(`/api/tasks/${id}/result`, { signal: signal });
+        const failData = await failRes.json();
+        failReason = failData.error || failData.message || failReason;
+      } catch (err) {
+        failReason = `获取失败原因失败：${err.message}`;
+      }
+      addMessage(`❌ 任务执行失败\n失败原因：${failReason}\n\n建议：检查LLM API密钥/地址是否正确，或知识图谱配置`, "bot", false, true);
+      showToast("任务执行失败");
+      return;
+    }
+
+    // 4. 获取最终结果
+    let r;
+    try {
+      r = await fetch(`/api/tasks/${id}/result`, { signal: signal });
+    } catch (err) {
+      throw new Error(`获取任务结果失败：${err.message}`);
+    }
+
+    if (!r.ok) {
+      throw new Error(`获取结果失败 [HTTP ${r.status}]`);
+    }
+
+    const result = await r.json();
+
+    loading.remove();
+    render(result);
+    addHistory(q,result); // 保存历史
+    showToast("回答已生成");
+
+  } catch (err) {
+    // 捕获所有未处理的错误
+    loading.remove();
+    addMessage(`❌ 推理过程出错：${err.message}\n\n排查步骤：\n1. 确认后端服务已启动（./start_web_api.sh）\n2. 检查LLM相关配置（API Key/Base URL）\n3. 查看后端日志定位具体问题`, "bot", false, true);
+    showToast("推理失败");
+  } finally {
+    // 重置轮询控制器
+    pollController = null;
   }
-
-  if(status==="failed"){
-    loading.innerText="任务失败";return
-  }
-
-  const r = await fetch(`/api/tasks/${id}/result`)
-  const result = await r.json()
-
-  loading.remove()
-  render(result)
-  addHistory(q,result) // 保存历史
 }
 </script>
 
