@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>答而有据 · 智能问答系统</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  display:flex;height:100vh;
+  font-family:"Segoe UI",sans-serif;
+  background:#0d0d0d;color:#e6e6e6;
+}
+
+/* 左侧 */
+.sidebar{
+  width:260px;background:#111;border-right:1px solid #222;
+  display:flex;flex-direction:column;padding:12px;
+}
+
+.new-chat{
+  padding:10px;border-radius:8px;background:#1f2937;
+  text-align:center;cursor:pointer;margin-bottom:12px;
+}
+.new-chat:hover{background:#374151}
+
+.history{flex:1;overflow-y:auto}
+.history-item{
+  padding:10px;border-radius:8px;margin-bottom:8px;
+  cursor:pointer;background:#1a1a1a;
+}
+.history-item:hover{background:#2a2a2a}
+
+/* 主体 */
+.main{flex:1;display:flex;flex-direction:column}
+
+/* 顶栏 */
+.header{
+  height:50px;display:flex;align-items:center;
+  justify-content:space-between;padding:0 20px;
+  border-bottom:1px solid #222;
+}
+
+.title{font-size:16px;color:#ddd}
+
+.toggle{
+  display:flex;align-items:center;gap:8px;font-size:12px;color:#aaa;
+}
+
+.switch{
+  width:40px;height:20px;border-radius:20px;
+  background:#333;position:relative;cursor:pointer;
+}
+
+.switch::after{
+  content:"";position:absolute;width:16px;height:16px;
+  background:#fff;border-radius:50%;top:2px;left:2px;
+  transition:0.3s;
+}
+
+.switch.active{background:#2563eb}
+.switch.active::after{left:22px}
+
+/* 聊天区 */
+.chat{flex:1;padding:20px;overflow-y:auto}
+
+.message{
+  margin-bottom:20px;max-width:70%;
+  padding:12px 15px;border-radius:12px;
+  line-height:1.6;
+}
+
+.user{background:#1e3a8a;margin-left:auto}
+.bot{background:#1a1a1a;border:1px solid #333}
+
+/* 输入区（GPT风格） */
+.input-wrapper{
+  padding:15px;border-top:1px solid #222;
+}
+
+.input-box{
+  display:flex;align-items:center;
+  background:#111;border:1px solid #333;
+  border-radius:12px;padding:8px;
+}
+
+textarea{
+  flex:1;background:transparent;border:none;
+  color:#fff;resize:none;height:40px;
+  outline:none;padding:5px;
+}
+
+.send-btn{
+  width:36px;height:36px;border-radius:50%;
+  background:#2563eb;display:flex;
+  align-items:center;justify-content:center;
+  cursor:pointer;
+}
+
+.send-btn:hover{background:#1d4ed8}
+
+.send-btn::after{
+  content:"↑";font-size:16px;color:white;
+}
+
+/* 提示 */
+.toast{
+  position:fixed;top:20px;left:50%;
+  transform:translateX(-50%);
+  background:#111;border:1px solid #333;
+  padding:10px 20px;border-radius:8px;
+  display:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+  <div class="new-chat" onclick="newChat()">+ 新聊天</div>
+  <div class="history" id="history"></div>
+</div>
+
+<div class="main">
+
+  <div class="header">
+    <div class="title">答而有据 · 智能问答系统</div>
+    <div class="toggle">
+      知识图谱
+      <div id="kgSwitch" class="switch" onclick="toggleKG()"></div>
+    </div>
+  </div>
+
+  <div class="chat" id="chat"></div>
+
+  <div class="input-wrapper">
+    <div class="input-box">
+      <textarea id="question" placeholder="输入你的问题..."></textarea>
+      <div class="send-btn" onclick="send()"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let useKG = false
+
+function showToast(msg){
+  const t = document.getElementById("toast")
+  t.innerText = msg
+  t.style.display = "block"
+  setTimeout(()=>t.style.display="none",1500)
+}
+
+function toggleKG(){
+  useKG = !useKG
+  const sw = document.getElementById("kgSwitch")
+  sw.classList.toggle("active")
+  showToast(useKG ? "已开启知识图谱" : "已关闭知识图谱")
+}
+
+function addMessage(content, type, md=false){
+  const chat = document.getElementById("chat")
+  const div = document.createElement("div")
+  div.className = "message " + type
+  div.innerHTML = md ? marked.parse(content) : content
+  chat.appendChild(div)
+  chat.scrollTop = chat.scrollHeight
+  return div
+}
+
+function addHistory(q, r){
+  const h = document.getElementById("history")
+  const item = document.createElement("div")
+  item.className = "history-item"
+  item.innerText = q
+  item.onclick = ()=>{
+    document.getElementById("chat").innerHTML = ""
+    addMessage(q,"user")
+    render(r)
+  }
+  h.appendChild(item)
+}
+
+function render(res){
+  let text = ""
+  if(res.answer) text += "### 回答\n"+res.answer+"\n\n"
+  if(res.reasoning){
+    text += "### 推理过程\n"
+    res.reasoning.forEach((r,i)=>text += `${i+1}. ${r}\n`)
+  }
+  addMessage(text,"bot",true)
+}
+
+function newChat(){
+  document.getElementById("chat").innerHTML = ""
+}
+
+async function send(){
+  const q = document.getElementById("question").value
+  if(!q) return
+
+  addMessage(q,"user")
+  const loading = addMessage("推理中...","bot")
+
+  const res = await fetch("/api/tasks",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      question:q,
+      usd_path:"/shared/usd_assets/DEMO/demo_01/scene_01/1.usd",
+      use_kg:useKG,
+      llm_model:"gemini-3-flash-preview",
+      llm_api_key:""
+    })
+  })
+
+  const data = await res.json()
+  const id = data.task_id
+
+  let status="running"
+  while(status==="running"){
+    await new Promise(r=>setTimeout(r,2000))
+    const s = await fetch(`/api/tasks/${id}`)
+    const sd = await s.json()
+    status = sd.status
+  }
+
+  if(status==="failed"){
+    loading.innerText="任务失败";return
+  }
+
+  const r = await fetch(`/api/tasks/${id}/result`)
+  const result = await r.json()
+
+  loading.remove()
+  render(result)
+  addHistory(q,result)
+}
+</script>
+
+</body>
+</html>
