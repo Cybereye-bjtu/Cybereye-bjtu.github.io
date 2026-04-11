@@ -21,7 +21,7 @@
             background-color: #ffffff;
         }
 
-        /* 左侧侧边栏（历史对话） */
+        /* 左侧侧边栏（历史对话）- 调整标题位置 */
         .sidebar {
             width: 260px;
             background-color: #ffffff;
@@ -31,7 +31,17 @@
             padding: 8px 0;
         }
 
-        /* 新对话按钮 */
+        /* 新增：侧边栏顶部标题 */
+        .sidebar-title {
+            padding: 12px 16px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #111827;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 8px;
+        }
+
+        /* 新对话按钮 - 位置在标题下方 */
         .new-chat-btn {
             margin: 0 8px 12px 8px;
             padding: 8px 12px;
@@ -58,6 +68,21 @@
             color: #6b7280;
         }
 
+        /* 历史对话列表容器（包含空状态） */
+        .history-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 历史对话标题（固定显示） */
+        .history-title {
+            padding: 0 12px 8px;
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
         /* 历史对话列表 */
         .history-list {
             flex: 1;
@@ -65,6 +90,38 @@
             padding: 0 4px;
         }
 
+        /* 历史记录空状态 */
+        .history-empty {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #9ca3af;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .history-empty-icon {
+            width: 48px;
+            height: 48px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d1d5db' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'%3E%3C/path%3E%3C/svg%3E");
+            background-size: 48px 48px;
+            background-repeat: no-repeat;
+            margin-bottom: 16px;
+        }
+
+        .history-empty-text {
+            margin-bottom: 8px;
+        }
+
+        .history-empty-tip {
+            font-size: 12px;
+            color: #d1d5db;
+        }
+
+        /* 历史项样式 */
         .history-item {
             padding: 6px 8px;
             border-radius: 6px;
@@ -90,7 +147,6 @@
             color: #2563eb;
         }
 
-        /* 历史项前缀图标（对话图标） */
         .history-item::before {
             content: "";
             width: 16px;
@@ -104,7 +160,6 @@
             stroke: #2563eb;
         }
 
-        /* 历史项右侧三点（悬停显示） */
         .history-item::after {
             content: "";
             width: 16px;
@@ -128,18 +183,57 @@
             background-color: #ffffff;
         }
 
-        /* 顶部标题栏 */
+        /* 顶部栏 - 重构：左侧空白+右侧功能区 */
         .header {
             height: 50px;
             border-bottom: 1px solid #e5e7eb;
             display: flex;
             align-items: center;
+            justify-content: space-between; /* 左右分布 */
             padding: 0 20px;
-            font-size: 16px;
-            color: #111827;
         }
 
-        /* 聊天内容区 */
+        /* 新增：右上角功能区（复刻豆包样式） */
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-title {
+            font-size: 14px;
+            color: #6b7280;
+            text-align: center;
+        }
+
+        .header-subtitle {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .header-action {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .header-action:hover {
+            background-color: #f3f4f6;
+        }
+
+        .header-action-icon {
+            width: 18px;
+            height: 18px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 8v6l-4 4M2 8l10.75 10.75c.8.8 2 .8 2.8 0l1.6-1.6c.8-.8.8-2 0-2.8L12 8'/%3E%3C/svg%3E");
+            background-size: 18px 18px;
+        }
+
+        /* 聊天内容区 - 优化填充：增加默认欢迎语 */
         .chat-container {
             flex: 1;
             padding: 20px;
@@ -147,6 +241,53 @@
             max-width: 800px;
             margin: 0 auto;
             width: 100%;
+        }
+
+        /* 新增：欢迎语样式 */
+        .welcome-card {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 24px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background-color: #f9fafb;
+        }
+
+        .welcome-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .welcome-desc {
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .welcome-tips {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .welcome-tip-item {
+            padding: 8px 12px;
+            border-radius: 6px;
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            font-size: 13px;
+            color: #4b5563;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .welcome-tip-item:hover {
+            background-color: #eff6ff;
+            border-color: #2563eb;
+            color: #2563eb;
         }
 
         /* 消息气泡 */
@@ -177,7 +318,7 @@
             border: 1px solid #fecdd3;
         }
 
-        /* 底部输入区 */
+        /* 底部输入区 - 新增知识图谱按钮 */
         .input-area {
             padding: 15px;
             border-top: 1px solid #e5e7eb;
@@ -193,6 +334,7 @@
             border: 1px solid #e5e7eb;
             border-radius: 24px;
             padding: 8px 12px;
+            margin-bottom: 8px;
         }
 
         #question-input {
@@ -230,6 +372,40 @@
             font-size: 16px;
         }
 
+        /* 新增：知识图谱开关按钮（复刻豆包上传文件样式） */
+        .kg-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #6b7280;
+            cursor: pointer;
+            width: fit-content;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .kg-toggle:hover {
+            background-color: #f3f4f6;
+        }
+
+        .kg-icon {
+            width: 16px;
+            height: 16px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z'/%3E%3Cpolyline points='3.27 6.96 12 12.01 20.73 6.96'/%3E%3Cline x1='12' y1='22.08' x2='12' y2='12'/%3E%3C/svg%3E");
+            background-size: 16px 16px;
+        }
+
+        .kg-toggle.active .kg-icon {
+            stroke: #2563eb;
+        }
+
+        .kg-toggle.active {
+            color: #2563eb;
+            font-weight: 500;
+        }
+
         /* 提示弹窗 */
         .toast {
             position: fixed;
@@ -248,20 +424,66 @@
     </style>
 </head>
 <body>
-    <!-- 左侧侧边栏 -->
+    <!-- 左侧侧边栏（调整标题位置+新增顶部标题） -->
     <div class="sidebar">
+        <!-- 新增：侧边栏左上角标题 -->
+        <div class="sidebar-title">答而有据 · 智能问答</div>
         <div class="new-chat-btn" onclick="newChat()">新对话</div>
-        <div class="history-list" id="history-list"></div>
+        <!-- 历史对话容器（包含标题+列表/空状态） -->
+        <div class="history-container">
+            <div class="history-title">历史对话</div>
+            <div class="history-list" id="history-list"></div>
+            <!-- 历史记录空状态 -->
+            <div class="history-empty" id="history-empty">
+                <div class="history-empty-icon"></div>
+                <div class="history-empty-text">暂无历史对话</div>
+                <div class="history-empty-tip">发送消息后将显示在这里</div>
+            </div>
+        </div>
     </div>
 
-    <!-- 右侧主内容 -->
+    <!-- 右侧主内容（新增右上角功能区） -->
     <div class="main-content">
-        <div class="header">智能问答助手</div>
-        <div class="chat-container" id="chat-container"></div>
+        <!-- 重构顶部栏：右侧新增豆包样式功能区 -->
+        <div class="header">
+            <div class="header-left"></div> <!-- 左侧占位 -->
+            <div class="header-right">
+                <div class="header-text">
+                    <div class="header-title">网页功能优化</div>
+                    <div class="header-subtitle">内容由豆包 AI 生成</div>
+                </div>
+                <div class="header-action">
+                    <div class="header-action-icon"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 聊天内容区（新增欢迎语填充空白） -->
+        <div class="chat-container" id="chat-container">
+            <!-- 新增：默认欢迎语（无消息时显示） -->
+            <div class="welcome-card" id="welcome-card">
+                <div class="welcome-title">你好！我是智能问答助手</div>
+                <div class="welcome-desc">
+                    我可以解答你的各类问题，支持知识图谱增强回答，点击下方示例快速体验，或直接输入你的问题。
+                </div>
+                <div class="welcome-tips">
+                    <div class="welcome-tip-item" onclick="quickAsk('如何优化网页加载速度？')">如何优化网页加载速度？</div>
+                    <div class="welcome-tip-item" onclick="quickAsk('知识图谱的应用场景有哪些？')">知识图谱的应用场景有哪些？</div>
+                    <div class="welcome-tip-item" onclick="quickAsk('如何对接后端API？')">如何对接后端API？</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部输入区（新增知识图谱按钮） -->
         <div class="input-area">
             <div class="input-box">
                 <textarea id="question-input" placeholder="输入你的问题..."></textarea>
                 <button class="send-btn" onclick="sendMessage()"></button>
+            </div>
+            <!-- 新增：知识图谱开关按钮（复刻豆包上传文件样式） -->
+            <div class="kg-toggle" id="kg-toggle" onclick="toggleKG()">
+                <div class="kg-icon"></div>
+                <div class="kg-text">使用知识图谱</div>
             </div>
         </div>
     </div>
@@ -274,6 +496,7 @@
         let activeHistoryId = null; // 当前选中的历史ID
         let currentChat = { question: "", answer: "" }; // 当前对话
         let pollController = null; // 轮询控制器（用于终止后端请求）
+        let useKG = false; // 新增：知识图谱开关状态
 
         // ===================== 本地存储（历史记录） =====================
         // 获取历史记录
@@ -300,37 +523,66 @@
             renderHistory(); // 刷新历史列表
         }
 
-        // 渲染历史列表
+        // 渲染历史列表（控制空状态显示/隐藏）
         function renderHistory() {
             const historyList = document.getElementById("history-list");
-            historyList.innerHTML = "";
+            const historyEmpty = document.getElementById("history-empty");
             const history = getHistory();
             
-            history.forEach(item => {
-                const itemEl = document.createElement("div");
-                itemEl.className = `history-item ${activeHistoryId === item.id ? "active" : ""}`;
-                itemEl.dataset.id = item.id;
-                // 超长文本省略（28字）
-                itemEl.innerText = item.question.length > 28 
-                    ? item.question.substring(0, 28) + "..." 
-                    : item.question;
-                // 点击加载历史对话
-                itemEl.onclick = () => loadHistoryChat(item);
-                historyList.appendChild(itemEl);
-            });
+            // 有历史记录：显示列表，隐藏空状态
+            if (history.length > 0) {
+                historyList.style.display = "block";
+                historyEmpty.style.display = "none";
+                historyList.innerHTML = "";
+                
+                history.forEach(item => {
+                    const itemEl = document.createElement("div");
+                    itemEl.className = `history-item ${activeHistoryId === item.id ? "active" : ""}`;
+                    itemEl.dataset.id = item.id;
+                    // 超长文本省略（28字）
+                    itemEl.innerText = item.question.length > 28 
+                        ? item.question.substring(0, 28) + "..." 
+                        : item.question;
+                    // 点击加载历史对话
+                    itemEl.onclick = () => loadHistoryChat(item);
+                    historyList.appendChild(itemEl);
+                });
+            } else {
+                // 无历史记录：隐藏列表，显示空状态
+                historyList.style.display = "none";
+                historyEmpty.style.display = "flex";
+            }
         }
 
         // 加载选中的历史对话
         function loadHistoryChat(item) {
             activeHistoryId = item.id;
             renderHistory(); // 更新选中样式
-            // 清空聊天区并渲染历史对话
+            // 清空聊天区并隐藏欢迎语
             const chatContainer = document.getElementById("chat-container");
             chatContainer.innerHTML = "";
+            document.getElementById("welcome-card").style.display = "none";
+            // 渲染历史对话
             addMessage(item.question, "user");
             addMessage(item.answer, "bot");
             // 更新当前对话状态
             currentChat = { question: item.question, answer: item.answer };
+        }
+
+        // ===================== 新增功能：知识图谱开关 =====================
+        function toggleKG() {
+            useKG = !useKG;
+            const kgToggle = document.getElementById("kg-toggle");
+            kgToggle.classList.toggle("active");
+            const kgText = kgToggle.querySelector(".kg-text");
+            kgText.innerText = useKG ? "已开启知识图谱" : "使用知识图谱";
+            showToast(useKG ? "已开启知识图谱增强回答" : "已关闭知识图谱");
+        }
+
+        // ===================== 新增功能：快速提问（填充空白） =====================
+        function quickAsk(question) {
+            document.getElementById("question-input").value = question;
+            sendMessage();
         }
 
         // ===================== 消息交互 =====================
@@ -342,8 +594,11 @@
             setTimeout(() => toast.style.display = "none", 1500);
         }
 
-        // 添加消息到聊天区
+        // 添加消息到聊天区（新增：隐藏欢迎语）
         function addMessage(content, type, isError = false) {
+            // 隐藏欢迎语
+            document.getElementById("welcome-card").style.display = "none";
+            
             const chatContainer = document.getElementById("chat-container");
             const messageEl = document.createElement("div");
             // 消息类型：user/bot + 错误样式
@@ -367,8 +622,13 @@
                 saveHistory(currentChat.question, currentChat.answer);
                 showToast("当前对话已保存");
             }
-            // 清空聊天区和输入框
-            document.getElementById("chat-container").innerHTML = "";
+            // 清空聊天区，显示欢迎语
+            const chatContainer = document.getElementById("chat-container");
+            chatContainer.innerHTML = "";
+            chatContainer.appendChild(document.getElementById("welcome-card"));
+            document.getElementById("welcome-card").style.display = "block";
+            
+            // 清空输入框
             document.getElementById("question-input").value = "";
             // 重置状态
             activeHistoryId = null;
@@ -376,7 +636,7 @@
             renderHistory(); // 刷新历史列表（取消选中）
         }
 
-        // ===================== 后端接入核心逻辑 =====================
+        // ===================== 后端接入核心逻辑（保留原有+新增知识图谱参数） =====================
         // 发送消息（核心：对接后端的入口）
         async function sendMessage() {
             const inputEl = document.getElementById("question-input");
@@ -395,15 +655,14 @@
             const signal = pollController.signal;
 
             try {
-                // ========== 步骤1：调用后端「创建任务」接口 ==========
+                // ========== 步骤1：调用后端「创建任务」接口（新增use_kg参数） ==========
                 const createRes = await Promise.race([
                     fetch("/api/tasks", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
                             question: question,
-                            // 以下为后端需要的参数（根据实际需求调整）
-                            use_kg: false, // 是否开启知识图谱
+                            use_kg: useKG, // 新增：知识图谱开关状态（对接后端）
                             llm_model: "gemini-3-flash-preview", // 模型名称
                             llm_api_key: "", // 模型API密钥
                             llm_base_url: "" // 模型接口地址
@@ -481,7 +740,7 @@
 
         // 页面加载时初始化
         window.onload = function() {
-            renderHistory(); // 渲染历史记录
+            renderHistory(); // 渲染历史记录（首次加载会判断是否显示空状态）
             // 回车发送消息（按住shift+回车换行）
             document.getElementById("question-input").addEventListener("keydown", (e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
