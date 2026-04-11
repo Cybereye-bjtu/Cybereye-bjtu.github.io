@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh">
 <head>
@@ -12,27 +13,30 @@
 body{
   display:flex;height:100vh;
   font-family:"Segoe UI",sans-serif;
-  background:#0d0d0d;color:#e6e6e6;
+  background:#ffffff;color:#000000;
 }
 
 /* 左侧 */
 .sidebar{
-  width:260px;background:#111;border-right:1px solid #222;
+  width:260px;background:#f5f5f5;border-right:1px solid #e5e5e5;
   display:flex;flex-direction:column;padding:12px;
 }
 
 .new-chat{
-  padding:10px;border-radius:8px;background:#1f2937;
+  padding:10px;border-radius:8px;background:#e5e7eb;
   text-align:center;cursor:pointer;margin-bottom:12px;
+  color: #000;
 }
-.new-chat:hover{background:#374151}
+.new-chat:hover{background:#d1d5db}
 
 .history{flex:1;overflow-y:auto}
 .history-item{
   padding:10px;border-radius:8px;margin-bottom:8px;
-  cursor:pointer;background:#1a1a1a;
+  cursor:pointer;background:#ffffff;
+  color: #000;
+  border: 1px solid #e5e5e5;
 }
-.history-item:hover{background:#2a2a2a}
+.history-item:hover{background:#f3f4f6}
 
 /* 主体 */
 .main{flex:1;display:flex;flex-direction:column}
@@ -41,18 +45,18 @@ body{
 .header{
   height:50px;display:flex;align-items:center;
   justify-content:space-between;padding:0 20px;
-  border-bottom:1px solid #222;
+  border-bottom:1px solid #e5e5e5;
 }
 
-.title{font-size:16px;color:#ddd}
+.title{font-size:16px;color:#000}
 
 .toggle{
-  display:flex;align-items:center;gap:8px;font-size:12px;color:#aaa;
+  display:flex;align-items:center;gap:8px;font-size:12px;color:#000;
 }
 
 .switch{
   width:40px;height:20px;border-radius:20px;
-  background:#333;position:relative;cursor:pointer;
+  background:#d1d5db;position:relative;cursor:pointer;
 }
 
 .switch::after{
@@ -65,31 +69,35 @@ body{
 .switch.active::after{left:22px}
 
 /* 聊天区 */
-.chat{flex:1;padding:20px;overflow-y:auto}
+.chat{flex:1;padding:20px;overflow-y:auto;max-width: 800px;margin: 0 auto; width: 100%;}
 
 .message{
-  margin-bottom:20px;max-width:70%;
-  padding:12px 15px;border-radius:12px;
+  margin-bottom:16px;max-width:85%;
+  padding:12px 16px;border-radius:18px;
   line-height:1.6;
+  word-wrap: break-word;
 }
 
-.user{background:#1e3a8a;margin-left:auto}
-.bot{background:#1a1a1a;border:1px solid #333}
+.user{background:#007bff;color: #fff;margin-left:auto}
+.bot{background:#f5f5f5;color: #000;border:1px solid #e5e5e5}
 
 /* 输入区（GPT风格） */
 .input-wrapper{
-  padding:15px;border-top:1px solid #222;
+  padding:15px;border-top:1px solid #e5e5e5;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .input-box{
   display:flex;align-items:center;
-  background:#111;border:1px solid #333;
-  border-radius:12px;padding:8px;
+  background:#ffffff;border:1px solid #e5e5e5;
+  border-radius:24px;padding:8px 12px;
 }
 
 textarea{
   flex:1;background:transparent;border:none;
-  color:#fff;resize:none;height:40px;
+  color:#000;resize:none;height:40px;
   outline:none;padding:5px;
 }
 
@@ -110,7 +118,8 @@ textarea{
 .toast{
   position:fixed;top:20px;left:50%;
   transform:translateX(-50%);
-  background:#111;border:1px solid #333;
+  background:#ffffff;border:1px solid #e5e5e5;
+  color: #000;
   padding:10px 20px;border-radius:8px;
   display:none;
 }
@@ -122,16 +131,17 @@ textarea{
 <div class="sidebar">
   <div class="new-chat" onclick="newChat()">+ 新聊天</div>
   <div class="history" id="history"></div>
+  <!-- 知识图谱按钮移到左侧底部 -->
+  <div class="toggle" style="margin-top:12px; padding-top:12px; border-top:1px solid #e5e5e5;">
+    知识图谱
+    <div id="kgSwitch" class="switch" onclick="toggleKG()"></div>
+  </div>
 </div>
 
 <div class="main">
 
   <div class="header">
     <div class="title">答而有据 · 智能问答系统</div>
-    <div class="toggle">
-      知识图谱
-      <div id="kgSwitch" class="switch" onclick="toggleKG()"></div>
-    </div>
   </div>
 
   <div class="chat" id="chat"></div>
@@ -216,7 +226,8 @@ async function send(){
       usd_path:"/shared/usd_assets/DEMO/demo_01/scene_01/1.usd",
       use_kg:useKG,
       llm_model:"gemini-3-flash-preview",
-      llm_api_key:""
+      llm_api_key:"",
+      llm_base_url:""
     })
   })
 
@@ -246,3 +257,4 @@ async function send(){
 
 </body>
 </html>
+
