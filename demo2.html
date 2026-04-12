@@ -299,6 +299,12 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
+        /* 指南交互后固定在对话流底部，便于继续点其他项 */
+        .welcome-card.welcome-card--pinned {
+            margin-top: 16px;
+            margin-bottom: 24px;
+        }
+
         .welcome-title {
             font-size: 18px;
             font-weight: 600;
@@ -1027,6 +1033,18 @@
             );
         }
 
+        /** 将欢迎区移到底部并显示，便于连续查看多条本地指南 */
+        function pinWelcomeCardBelowMessages() {
+            const chat = document.getElementById("chat-container");
+            const welcome = document.getElementById("welcome-card");
+            if (!chat || !welcome) return;
+            welcome.classList.add("welcome-card--pinned");
+            welcome.remove();
+            chat.appendChild(welcome);
+            welcome.style.display = "block";
+            chat.scrollTop = chat.scrollHeight;
+        }
+
         function showHelpGuide(key) {
             const g = HELP_GUIDES[key];
             if (!g) return;
@@ -1041,13 +1059,17 @@
                 local_help_key: key
             };
             saveHistory(g.question, preview, null, key);
+            pinWelcomeCardBelowMessages();
         }
 
         /** 清空聊天区但保留欢迎卡片节点，避免 DOM 引用失效 */
         function preserveWelcomeClearChat() {
             const chatContainer = document.getElementById("chat-container");
             const welcome = document.getElementById("welcome-card");
-            if (welcome) welcome.remove();
+            if (welcome) {
+                welcome.classList.remove("welcome-card--pinned");
+                welcome.remove();
+            }
             chatContainer.innerHTML = "";
             if (welcome) chatContainer.appendChild(welcome);
         }
