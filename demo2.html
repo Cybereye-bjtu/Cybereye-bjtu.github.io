@@ -755,6 +755,27 @@
             color: #9ca3af;
             font-style: italic;
         }
+
+        .help-guide-card .help-guide-body p {
+            margin: 0 0 10px 0;
+            line-height: 1.65;
+            color: #374151;
+            font-size: 13px;
+        }
+
+        .help-guide-card .help-guide-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        .help-guide-tip {
+            font-size: 13px;
+            line-height: 1.55;
+            color: #4b5563;
+            padding: 10px 12px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
@@ -820,20 +841,32 @@
                     你好！我是智能问答助手
                 </div>
                 <div class="welcome-desc">
-                    我可以解答你的各类问题，支持知识图谱增强回答，点击下方示例快速体验，或直接输入你的问题。
+                    我可以解答你的各类问题，支持知识图谱增强回答。下方为使用指南（本地说明，不调用后端）；你也可以直接在底部输入框提问，将走后端智能问答。
                 </div>
                 <div class="welcome-tips">
-                    <div class="welcome-tip-item" onclick="quickAsk('如何优化网页加载速度？')">
-                        <i class="fas fa-bolt"></i>
-                        如何优化网页加载速度？
+                    <div class="welcome-tip-item" onclick="showHelpGuide('usd_path')">
+                        <i class="fas fa-folder-open"></i>
+                        USD Path 是干什么的？应该填什么？
                     </div>
-                    <div class="welcome-tip-item" onclick="quickAsk('知识图谱的应用场景有哪些？')">
-                        <i class="fas fa-project-diagram"></i>
-                        知识图谱的应用场景有哪些？
+                    <div class="welcome-tip-item" onclick="showHelpGuide('usd_path_unknown')">
+                        <i class="fas fa-question-circle"></i>
+                        如果我不知道填哪个 USD Path，该怎么办？
                     </div>
-                    <div class="welcome-tip-item" onclick="quickAsk('如何对接后端API？')">
-                        <i class="fas fa-code"></i>
-                        如何对接后端API？
+                    <div class="welcome-tip-item" onclick="showHelpGuide('kg_switch')">
+                        <i class="fas fa-database"></i>
+                        「使用知识图谱」开关是做什么的？
+                    </div>
+                    <div class="welcome-tip-item" onclick="showHelpGuide('api_key')">
+                        <i class="fas fa-key"></i>
+                        LLM API Key 不填可以吗？
+                    </div>
+                    <div class="welcome-tip-item" onclick="showHelpGuide('waiting')">
+                        <i class="fas fa-clock"></i>
+                        发送问题后为什么要等待一段时间？
+                    </div>
+                    <div class="welcome-tip-item" onclick="showHelpGuide('result_view')">
+                        <i class="fas fa-list-alt"></i>
+                        结果页面里会展示哪些内容？
                     </div>
                 </div>
             </div>
@@ -885,8 +918,8 @@
     <script>
         // 全局状态管理
         let activeHistoryId = null; // 当前选中的历史ID
-        /** @type {{ question: string, answer_preview: string, structured_result: object|null, answer?: string }} */
-        let currentChat = { question: "", answer_preview: "", structured_result: null };
+        /** @type {{ question: string, answer_preview: string, structured_result: object|null, answer?: string, local_help_key?: string|null }} */
+        let currentChat = { question: "", answer_preview: "", structured_result: null, local_help_key: null };
         let pollController = null; // 轮询控制器（用于终止后端请求）
         let useKG = false; // 新增：知识图谱开关状态
 
@@ -902,6 +935,112 @@
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#39;");
+        }
+
+        /** 欢迎区本地帮助（不走后端） */
+        const HELP_GUIDES = {
+            usd_path: {
+                question: "USD Path 是干什么的？应该填什么？",
+                tip: "优先复制老师或文档提供的示例路径；不确定时不要自己猜。",
+                answer:
+                    "USD Path 用来告诉系统：这次任务要在哪一个 USD 三维场景文件里执行。它对应仓库、工厂、设备区等已经建好的仿真或建模场景，而不是一句自然语言描述。\n\n" +
+                    "这个路径一般需要填写服务器上真实存在的文件位置（例如共享目录下的某个 .usd 文件）。如果填错，后端在加载场景时可能失败，任务无法正常启动。\n\n" +
+                    "普通用户应优先使用老师或开发者提前给定的示例路径；若页面或文档里有默认示例，也可以先按默认填写再逐步调整。"
+            },
+            usd_path_unknown: {
+                question: "如果我不知道填哪个 USD Path，该怎么办？",
+                tip: "可先保留页面里的默认示例做一次连通性体验，再向管理员确认正式场景。",
+                answer:
+                    "建议第一步先看本页「运行配置」里是否已经预填了示例路径；若有，可先用它完成一次完整流程，确认前后端能正常协作。\n\n" +
+                    "第二步查阅项目 README、实验说明或向维护系统的同学确认：当前实验环境「允许使用」的场景文件有哪些、路径是什么。不建议凭感觉自行拼路径，以免任务在加载阶段失败。\n\n" +
+                    "若你只是想先体验功能，使用文档或页面提供的默认示例通常是最稳妥的做法。"
+            },
+            kg_switch: {
+                question: "「使用知识图谱」开关是做什么的？什么时候该打开？",
+                tip: "可先关再开各跑一次，对比结果区是否出现「知识图谱摘要」模块。",
+                answer:
+                    "打开后，系统会在回答流程中额外结合知识图谱侧的相关信息（如关系、经验摘要等），更适合需要背景依据、设备关联或文档型线索的问题。\n\n" +
+                    "关闭时，结果区主要展示：回答、Planner1 指示与回答评分，不会出现「知识图谱摘要」模块。若你做的是基础连通性测试，可以先关闭以简化界面；需要图谱增强时再打开。\n\n" +
+                    "请注意：若后端图谱或 Neo4j 等环境尚未就绪，即使打开开关，也可能无法获得理想的增强效果，此时可先联系管理员排查环境。"
+            },
+            api_key: {
+                question: "LLM API Key 不填可以吗？什么时候必须填写？",
+                tip: "若提交任务后出现与密钥或鉴权相关的报错，可在此处补填或与管理员确认服务端配置。",
+                answer:
+                    "是否必须填写，取决于后端是否已经在服务器环境（或网关）里配置好了默认的模型调用密钥。若运维已在机器上设置了可用的 key，你在网页里可以留空，由服务端代管。\n\n" +
+                    "若后端没有提供默认 key，你就需要在「运行配置」的 LLM API Key 中自行填写，否则主流程可能无法调用大模型。Base URL 同理：服务端已配则可空，未配则需按提供商填写。\n\n" +
+                    "API Key 属于敏感凭证，不要在公开场合泄露。若创建任务或运行中报与 key、401、鉴权相关的错误，通常说明需要在此处补填或由管理员在服务端配置。"
+            },
+            waiting: {
+                question: "发送问题后为什么要等待一段时间？",
+                tip: "长时间停在失败或报错时，可看页面提示或请管理员查看后端日志。",
+                answer:
+                    "本系统不是「纯聊天秒回」：提交问题后，后端会创建任务并在后台执行完整流程，例如加载场景、运行 Planner、必要时查询知识图谱、汇总结构化结果等，这些步骤都需要时间。\n\n" +
+                    "因此前端会先调用创建任务接口，再定时轮询任务状态；你会看到「排队中」「运行中」以及进度说明，这通常是正常现象。\n\n" +
+                    "只要状态没有变为失败（failed），一般表示系统仍在处理。任务耗时与场景规模、是否开图谱、模型响应速度等都有关，请耐心等待。"
+            },
+            result_view: {
+                question: "结果页面里会展示哪些内容？",
+                tip: "开关知识图谱后，可对比是否多出「知识图谱摘要」区块。",
+                answer:
+                    "在聊天区返回的结构化结果中，不开启知识图谱时，主要包含：回答（含主答案与补充说明）、Planner1 指示（决策与关键摘录）、以及回答评分（value / source / details 等）。\n\n" +
+                    "开启知识图谱后，会在上述内容之外，额外展示知识图谱摘要（例如经验摘要与 KG Trace 等列表信息）。\n\n" +
+                    "回答部分通常对应 direct_answer 与 reasoning_answer；Planner1 指示帮助理解当前决策逻辑；评分用于查看模型或规则对回答的评价。这样拆分展示，是为了比单一纯文本更易读，而不是只贴一大段未区分的内容。"
+            }
+        };
+
+        function formatHelpParagraphs(text) {
+            const chunks = String(text)
+                .split(/\n\s*\n/)
+                .map(s => s.trim())
+                .filter(Boolean);
+            return chunks
+                .map(
+                    p =>
+                        '<p>' +
+                        escapeHtml(p).replace(/\n/g, "<br>") +
+                        "</p>"
+                )
+                .join("");
+        }
+
+        function renderHelpGuideHtml(g) {
+            return (
+                '<div class="result-card help-guide-card">' +
+                '<div class="result-section">' +
+                '<div class="result-section-title"><i class="fas fa-book"></i>帮助指南</div>' +
+                '<div class="result-kv"><div class="result-kv-row">' +
+                '<span class="result-kv-key">当前问题</span>' +
+                '<span class="result-kv-val">' +
+                escapeHtml(g.question) +
+                "</span></div></div></div>" +
+                '<div class="result-section">' +
+                '<div class="result-section-title"><i class="fas fa-info-circle"></i>说明</div>' +
+                '<div class="help-guide-body">' +
+                formatHelpParagraphs(g.answer) +
+                "</div></div>" +
+                '<div class="result-section" style="border-bottom:none;padding-bottom:0;margin-bottom:0;">' +
+                '<div class="result-section-title"><i class="fas fa-lightbulb"></i>操作建议</div>' +
+                '<div class="help-guide-tip">' +
+                escapeHtml(g.tip || "") +
+                "</div></div></div>"
+            );
+        }
+
+        function showHelpGuide(key) {
+            const g = HELP_GUIDES[key];
+            if (!g) return;
+            addMessage(g.question, "user");
+            addHtmlMessage(renderHelpGuideHtml(g), "bot");
+            const preview =
+                g.answer.split(/\n\s*\n/)[0].trim().slice(0, 120) || "帮助指南";
+            currentChat = {
+                question: g.question,
+                answer_preview: preview,
+                structured_result: null,
+                local_help_key: key
+            };
+            saveHistory(g.question, preview, null, key);
         }
 
         /** 清空聊天区但保留欢迎卡片节点，避免 DOM 引用失效 */
@@ -929,17 +1068,22 @@
          * @param {string} question
          * @param {string} answerPreview 展示摘要（通常为 direct_answer）
          * @param {object|null} structuredResult GET /result 的完整 JSON
+         * @param {string} [localHelpKey] 本地帮助项键；有则写入 local_help_key，不走后端
          */
-        function saveHistory(question, answerPreview, structuredResult) {
+        function saveHistory(question, answerPreview, structuredResult, localHelpKey) {
             if (!question) return;
             let history = getHistory();
             history = history.filter(item => item.question !== question);
-            history.unshift({
+            const entry = {
                 id: Date.now().toString(),
                 question: question,
                 answer_preview: answerPreview || "",
-                structured_result: structuredResult || null
-            });
+                structured_result: structuredResult != null ? structuredResult : null
+            };
+            if (localHelpKey && HELP_GUIDES[localHelpKey]) {
+                entry.local_help_key = localHelpKey;
+            }
+            history.unshift(entry);
             if (history.length > 50) history = history.slice(0, 50);
             localStorage.setItem("chatHistory", JSON.stringify(history));
             renderHistory();
@@ -1069,12 +1213,21 @@
             const welcome = document.getElementById("welcome-card");
             if (welcome) welcome.style.display = "none";
             addMessage(item.question, "user");
-            if (item.structured_result && typeof item.structured_result === "object") {
+            if (item.local_help_key && HELP_GUIDES[item.local_help_key]) {
+                addHtmlMessage(renderHelpGuideHtml(HELP_GUIDES[item.local_help_key]), "bot");
+                currentChat = {
+                    question: item.question,
+                    answer_preview: item.answer_preview || "",
+                    structured_result: null,
+                    local_help_key: item.local_help_key
+                };
+            } else if (item.structured_result && typeof item.structured_result === "object") {
                 addHtmlMessage(renderStructuredResult(item.structured_result), "bot");
                 currentChat = {
                     question: item.question,
                     answer_preview: item.answer_preview || "",
-                    structured_result: item.structured_result
+                    structured_result: item.structured_result,
+                    local_help_key: null
                 };
             } else {
                 const legacy = item.answer_preview != null ? item.answer_preview : (item.answer || "");
@@ -1082,7 +1235,8 @@
                 currentChat = {
                     question: item.question,
                     answer_preview: legacy,
-                    structured_result: null
+                    structured_result: null,
+                    local_help_key: null
                 };
             }
         }
@@ -1117,12 +1271,6 @@
             const kgText = kgToggle.querySelector(".kg-text");
             kgText.innerText = useKG ? "已开启知识图谱" : "使用知识图谱";
             showToast(useKG ? "已开启知识图谱增强回答" : "已关闭知识图谱");
-        }
-
-        // ===================== 新增功能：快速提问（填充空白） =====================
-        function quickAsk(question) {
-            document.getElementById("question-input").value = question;
-            sendMessage();
         }
 
         // ===================== 消息交互 =====================
@@ -1355,7 +1503,8 @@
                 saveHistory(
                     currentChat.question,
                     currentChat.answer_preview,
-                    currentChat.structured_result
+                    currentChat.structured_result,
+                    currentChat.local_help_key
                 );
                 showToast("当前对话已保存");
             }
@@ -1368,7 +1517,7 @@
             autoResizeInput();
 
             activeHistoryId = null;
-            currentChat = { question: "", answer_preview: "", structured_result: null };
+            currentChat = { question: "", answer_preview: "", structured_result: null, local_help_key: null };
             historyPage = 1;
             renderHistory();
         }
@@ -1496,7 +1645,8 @@
                 currentChat = {
                     question: question,
                     answer_preview: preview,
-                    structured_result: resultData
+                    structured_result: resultData,
+                    local_help_key: null
                 };
                 saveHistory(question, preview, resultData);
                 showToast("回答已生成");
