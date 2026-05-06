@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>研究成果 - 灵眸 CyberEye</title>
+
+<style>
+:root{
+  --primary:#0b3c75;
+  --accent:#3c7dff;
+  --bg:#071a2f;
+  --card:#0e2a4d;
+  --text:#eaf2ff;
+  --muted:#9bb3d1;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family: "Segoe UI", Arial;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ===== NAVBAR ===== */
+.navbar{
+  position:fixed;
+  top:0;
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 60px;
+  background:rgba(10,25,50,0.85);
+  backdrop-filter: blur(10px);
+  z-index:1000;
+}
+
+.logo{
+  font-size:20px;
+  font-weight:600;
+  color:#cfe3ff;
+}
+
+.nav-links{
+  display:flex;
+  gap:30px;
+}
+
+.nav-links a{
+  color:#cfe3ff;
+  text-decoration:none;
+  font-size:15px;
+  transition:0.3s;
+}
+
+.nav-links a:hover{
+  color:#ffffff;
+}
+
+/* ===== HERO ===== */
+.hero{
+  height:85vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  background:linear-gradient(rgba(5,15,30,0.7), rgba(5,15,30,0.9)),
+  url('https://images.unsplash.com/photo-1555949963-aa79dcee981c') center/cover;
+}
+
+.hero h1{
+  font-size:56px;
+  color:#a78bfa;
+  margin-bottom:10px;
+}
+
+.hero h2{
+  font-size:28px;
+  margin-bottom:20px;
+}
+
+.hero p{
+  max-width:700px;
+  color:var(--muted);
+  margin-bottom:30px;
+}
+
+.hero button{
+  padding:12px 28px;
+  border:none;
+  border-radius:30px;
+  background:var(--accent);
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.hero button:hover{
+  background:#2a6cf0;
+}
+
+/* ===== SECTION ===== */
+.section{
+  padding:80px 60px;
+}
+
+.section-title{
+  text-align:center;
+  font-size:32px;
+  margin-bottom:50px;
+}
+
+/* ===== CARDS ===== */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(300px,1fr));
+  gap:30px;
+}
+
+.card{
+  background:var(--card);
+  border-radius:16px;
+  padding:24px;
+  transition:0.3s;
+  border:1px solid rgba(255,255,255,0.05);
+}
+
+.card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+.card h3{
+  margin-bottom:10px;
+  color:#dbeafe;
+}
+
+.card p{
+  font-size:14px;
+  color:var(--muted);
+  line-height:1.6;
+  margin-bottom:20px;
+}
+
+.card a{
+  text-decoration:none;
+  color:#6ea8ff;
+  font-size:14px;
+  font-weight:500;
+}
+
+.card a:hover{
+  text-decoration:underline;
+}
+
+/* ===== FOOTER ===== */
+.footer{
+  text-align:center;
+  padding:30px;
+  color:#7f9bbd;
+  border-top:1px solid rgba(255,255,255,0.05);
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo">👁 灵眸 CyberEye</div>
+  <div class="nav-links">
+    <a href="#">关于</a>
+    <a href="#">研究</a>
+    <a href="#">设施</a>
+    <a href="#">团队</a>
+    <a href="#">媒体</a>
+    <a href="#">联系方式</a>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>灵眸 CyberEye</h1>
+  <h2>跨空间大模型</h2>
+  <p>
+    融合物理空间与信息空间多源数据，进行高阶推理与主动认知，
+    在交通、工业等复杂现实场景中实现智能决策能力提升。
+  </p>
+  <button onclick="document.getElementById('research').scrollIntoView()">查看研究成果</button>
+</section>
+
+<!-- RESEARCH -->
+<section class="section" id="research">
+  <h2 class="section-title">研究成果</h2>
+
+  <div class="grid">
+
+    <!-- CARD 1 -->
+    <div class="card">
+      <h3>RailVQA：轨道视觉认知基准</h3>
+      <p>
+        面向自动驾驶列车（ATO）的视觉问答基准，支持多帧动态推理、
+        风险分析与可解释认知，填补铁路高层语义理解空白。
+      </p>
+      <a href="railvqa.html">查看详情 →</a>
+    </div>
+
+    <!-- CARD 2 -->
+    <div class="card">
+      <h3>跨空间认知推理框架</h3>
+      <p>
+        融合视觉、语言与物理世界建模，实现跨空间信息联动推理，
+        支持复杂任务中的多阶段决策生成。
+      </p>
+      <a href="#">查看详情 →</a>
+    </div>
+
+    <!-- CARD 3 -->
+    <div class="card">
+      <h3>工业异常检测系统</h3>
+      <p>
+        面向工业生产线的异常识别与预测系统，结合多模态感知与时序分析，
+        实现高精度实时安全监控。
+      </p>
+      <a href="#">查看详情 →</a>
+    </div>
+
+    <!-- CARD 4 -->
+    <div class="card">
+      <h3>多模态大模型调度平台</h3>
+      <p>
+        提供统一接口调度不同AI模型，实现高效资源分配与任务协同，
+        支持大规模复杂推理任务。
+      </p>
+      <a href="#">查看详情 →</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<div class="footer">
+  © 2026 灵眸 CyberEye · 北京交通大学
+</div>
+
+</body>
+</html>
