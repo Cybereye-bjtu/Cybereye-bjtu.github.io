@@ -518,9 +518,9 @@
       </div>
 
       <div class="figure-caption">
-        <p><strong>Fig. 3. Overview of the proposed TriPMA framework.</strong></p>
-        <p>The framework consists of three tightly coupled modules: TriPlanner, Manager, and Actor.</p>
-        <p>Unlike traditional embodied QA systems relying only on visual observations, TriPMA explicitly incorporates online and local information retrieval, enabling agents to reason over coupled physical and informational spaces.</p>
+        <p><strong>Fig. 1. Overview of the proposed TriPMA framework.</strong></p>
+        <p>A concrete workflow example of TriPMA. Given the question ``Why did conveyor belt A fail and stop?'', reasoning over physical and informational spaces, the agent navigates across regions (Assembly line work area ——> Electrical room), maintains an object information list, collects physical observations and digital information on demand, and dynamically updates the scene graph until the question becomes answerable.</p>
+       
       </div>
 
     </div>
@@ -545,8 +545,7 @@
 
       <div class="figure-caption">
         <p><strong>Fig. 2. Dataset examples and statistics of PhyInfoEQA.</strong></p>
-        <p>The benchmark contains 1,016 industrial embodied QA tasks constructed on NVIDIA Isaac Sim.</p>
-        <p>Unlike previous EQA datasets that mainly focus on navigation and perception, PhyInfoEQA emphasizes active reasoning under coupled physical and informational environments.</p>
+        <p>Task examples and dataset statistics of the PhyInfoEQA Dataset</p>
       </div>
 
     </div>
@@ -595,8 +594,8 @@
         </div>
       </div>
       <div class="figure-caption">
-        <p><strong>Fig. 3 (Detail). Detailed architecture of TriPMA.</strong></p>
-        <p>TriPlanner includes three sub-planners: answerability judgment, target decomposition, and navigation decision. Manager maintains object information list and hierarchical scene graph. Actor performs cross-region navigation and in-region exploration.</p>
+        <p><strong>Fig. 3 . Detailed architecture of TriPMA.</strong></p>
+        <p>Overview of the proposed TriPMA framework for PhyInfoEQA task. TriPMA consists of three functional modules: TriPlanner (Planner 1 for answerability judgment, Planner 2 for target decomposition, Planner 3 for navigation decision), Manager (maintaining an object information list and a hierarchical scene graph), and Actor (executing cross-region navigation and in-region exploration via multi-sourced value maps).</p>
       </div>
     </div>
 
@@ -616,8 +615,8 @@
         </div>
       </div>
       <div class="figure-caption">
-        <p><strong>Fig. 8. Qualitative reasoning case of TriPMA.</strong></p>
-        <p>A representative industrial QA example: compliance checking of high-speed train car body parking with physical observations and digital process guidelines.</p>
+        <p><strong>Fig. 4. Qualitative reasoning case of TriPMA.</strong></p>
+        <p>The two RGB-D images used by TriPMA for information acquisition: (a) capturing the equipment status and intactness information of the robotic arm; and (b) capturing the occupancy status of the vehicle bays.</p>
       </div>
     </div>
 
