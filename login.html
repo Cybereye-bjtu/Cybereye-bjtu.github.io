@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="灵眸OS工作台登录入口。" />
   <title>灵眸OS工作台登录</title>
-  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="icon" type="image/png" href="favicon.png" />
   <style>
     :root {
       --bg: #f5fbff;
@@ -131,6 +131,31 @@
       color: #fff !important;
       background: var(--ink);
       box-shadow: var(--shadow-soft);
+    }
+
+    .mail-toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 80;
+      max-width: calc(100% - 32px);
+      padding: 12px 18px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 999px;
+      color: #fff;
+      background: rgba(20,32,51,.92);
+      box-shadow: 0 18px 42px rgba(20,32,51,.24);
+      transform: translate(-50%, 16px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+      font-size: 14px;
+      font-weight: 720;
+    }
+
+    .mail-toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
     }
 
     .main {
@@ -676,11 +701,11 @@
 <body>
   <header class="topbar">
     <nav class="nav" aria-label="工作台登录导航">
-      <a class="brand" href="index.html" aria-label="返回 CyberClaw 首页"><img class="brand-logo" src="assets/lingmou-logo-selected-transparent.png" alt="灵眸 OS" /></a>
+      <a class="brand" href="index.html" aria-label="返回 CyberClaw 首页"><img class="brand-logo" src="lingmou-logo-selected-transparent.png" alt="灵眸 OS" /></a>
       <div class="links">
         <a href="index.html#eye">核心能力</a>
         <a href="index.html#cases">应用场景</a>
-        <a href="mailto:wangqb6@outlook.com" class="nav-action">申请访问</a>
+        <a href="mailto:wangqb6@outlook.com?subject=CyberClaw%20%E5%B7%A5%E4%BD%9C%E5%8F%B0%E8%AE%BF%E9%97%AE%E7%94%B3%E8%AF%B7" class="nav-action mail-link" data-mail-link data-email="wangqb6@outlook.com" data-subject="CyberClaw 工作台访问申请">申请访问</a>
       </div>
     </nav>
   </header>
@@ -763,6 +788,7 @@
       <div>北京交通大学 · 北京市海淀区上园村3号 · wangqb6@outlook.com</div>
     </div>
   </footer>
+  <div class="mail-toast" id="mailToast" role="status" aria-live="polite"></div>
 
   <script>
     const roles = document.querySelectorAll(".role");
@@ -797,6 +823,32 @@
       event.preventDefault();
       notice.textContent = "密码错误，请重新输入访问密码。";
       notice.classList.add("error", "show");
+    });
+
+    const mailToast = document.getElementById("mailToast");
+    let mailToastTimer;
+    document.querySelectorAll("[data-mail-link]").forEach((link) => {
+      link.addEventListener("click", (event) => {
+        const email = link.dataset.email || "wangqb6@outlook.com";
+        const subject = link.dataset.subject || "CyberClaw 工作台访问申请";
+        const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}`;
+        event.preventDefault();
+
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(email).catch(() => {});
+        }
+
+        if (mailToast) {
+          mailToast.textContent = `联系邮箱已复制：${email}`;
+          mailToast.classList.add("show");
+          window.clearTimeout(mailToastTimer);
+          mailToastTimer = window.setTimeout(() => mailToast.classList.remove("show"), 2400);
+        }
+
+        window.setTimeout(() => {
+          window.location.href = mailto;
+        }, 80);
+      });
     });
   </script>
 </body>
