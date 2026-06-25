@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="灵眸OS工作台登录入口。" />
-  <title>灵眸OS工作台登录</title>
+  <meta name="description" content="Liminal（灵眸）OS 工作台登录入口。" />
+  <title>Liminal（灵眸）OS 工作台登录</title>
   <link rel="icon" type="image/png" href="favicon.png" />
   <style>
     :root {
@@ -173,7 +173,7 @@
 
     h1 {
       margin-top: 18px;
-      max-width: 620px;
+      max-width: 680px;
       font-size: clamp(42px, 5.4vw, 76px);
     }
 
@@ -200,13 +200,18 @@
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      font-size: clamp(48px, 5.6vw, 76px);
+      font-size: clamp(40px, 4.4vw, 58px);
       font-weight: 900;
       line-height: 1.02;
+      white-space: nowrap;
     }
 
     .title-sub {
-      color: inherit;
+      display: block;
+      margin-top: 8px;
+      color: var(--ink);
+      font-size: clamp(30px, 3.2vw, 42px);
+      line-height: 1.05;
     }
 
     .lead {
@@ -650,7 +655,8 @@
       .main { padding: 30px 0 42px; }
       h1 { margin-top: 16px; }
       .title-kicker { font-size: 28px; }
-      .title-brand { font-size: 46px; }
+      .title-brand { font-size: clamp(30px, 8vw, 42px); }
+      .title-sub { font-size: clamp(24px, 6.4vw, 34px); }
       .lead {
         margin-top: 14px;
         font-size: 14px;
@@ -676,23 +682,24 @@
 <body>
   <header class="topbar">
     <nav class="nav" aria-label="工作台登录导航">
-      <a class="brand" href="index.html" aria-label="返回 CyberClaw 首页"><img class="brand-logo" src="lingmou-logo-selected-transparent.png" alt="灵眸 OS" /></a>
+      <a class="brand" href="index.html" aria-label="返回 Liminal（灵眸）OS 首页"><img class="brand-logo" src="lingmou-logo-selected-transparent.png" alt="Liminal（灵眸）OS" /></a>
       <div class="links">
         <a href="index.html#eye">核心能力</a>
         <a href="index.html#cases">应用场景</a>
-        <a href="mailto:wangqb6@outlook.com?subject=CyberClaw%20%E5%B7%A5%E4%BD%9C%E5%8F%B0%E8%AE%BF%E9%97%AE%E7%94%B3%E8%AF%B7" class="nav-action">申请访问</a>
+        <a href="mailto:wangqb6@outlook.com?subject=Liminal（灵眸）OS工作台访问申请" class="nav-action">申请访问</a>
       </div>
     </nav>
   </header>
 
   <main class="main">
     <section>
-      <div class="eyebrow"><span class="dot"></span>灵眸OS WORKBENCH</div>
+      <div class="eyebrow"><span class="dot"></span>LIMINAL（灵眸）OS WORKBENCH</div>
       <h1>
         <span class="title-kicker">登录</span>
-        <span class="title-brand">灵眸OS<span class="title-sub">工作台</span></span>
+        <span class="title-brand">Liminal（灵眸）OS</span>
+        <span class="title-sub">工作台</span>
       </h1>
-      <p class="lead">登录灵眸OS工作台，进行命令下发与任务查看。</p>
+      <p class="lead">登录 Liminal（灵眸）OS 工作台，进行命令下发与任务查看。</p>
       <div class="demo-summary" aria-label="工作台内容摘要">
         <div class="demo-summary-item">
           <div class="demo-summary-index">1</div>
@@ -713,7 +720,7 @@
       <div class="login-head">
         <div>
           <h2>访问验证</h2>
-          <p>选择身份并输入访问账号，进入灵眸OS工作台。</p>
+          <p>选择身份并输入访问账号，进入 Liminal（灵眸）OS 工作台。</p>
         </div>
         <span class="online">Workbench Online</span>
       </div>
