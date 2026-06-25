@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="CyberClaw · 灵眸 OS：面向复杂场景的跨空间智能体操作系统。" />
-  <title>CyberClaw · 灵眸 OS | 跨空间智能体操作系统</title>
+  <meta name="description" content="Liminal（灵眸）OS：面向复杂场景的跨空间智能体操作系统。" />
+  <title>Liminal（灵眸）OS | 跨空间智能体操作系统</title>
   <link rel="icon" type="image/png" href="favicon.png" />
   <style>
     :root {
@@ -36,7 +36,7 @@
     }
     body {
       margin: 0;
-      min-width: 320px;
+      min-width: 0;
       font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", Arial, sans-serif;
       color: var(--text);
       background:
@@ -66,6 +66,7 @@
     img, svg, canvas, video { max-width: 100%; }
 
     .page { overflow: hidden; }
+    html, body { overflow-x: hidden; }
 
     .topbar {
       position: sticky;
@@ -101,6 +102,18 @@
       object-fit: contain;
       object-position: left center;
       border-radius: 12px;
+    }
+
+    .brand-word {
+      display: inline-flex;
+      align-items: baseline;
+      min-height: 68px;
+      color: var(--ink);
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 0;
+      line-height: 1;
+      white-space: nowrap;
     }
 
     .mark {
@@ -145,14 +158,30 @@
 
     .hero {
       position: relative;
-      padding: 96px 0 76px;
+      min-height: calc(100vh - 76px);
+      min-height: calc(100svh - 76px);
+      padding: 0;
+      overflow: hidden;
+      background: #0f172a;
     }
 
     .hero-inner {
+      width: 100%;
+      min-height: calc(100vh - 76px);
+      min-height: calc(100svh - 76px);
+      position: relative;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(360px, .82fr);
-      gap: clamp(44px, 6vw, 96px);
-      align-items: center;
+      grid-template-columns: 1fr;
+      align-items: end;
+    }
+
+    .hero-lead {
+      position: relative;
+      z-index: 3;
+      max-width: 620px;
+      margin: 0 0 clamp(38px, 8vh, 86px) clamp(30px, 7vw, 96px);
+      text-align: left;
+      color: #fff;
     }
 
     .eyebrow {
@@ -162,11 +191,13 @@
       padding: 8px 12px;
       border: 1px solid var(--line);
       border-radius: 999px;
-      color: var(--blue-deep);
-      background: rgba(255,255,255,.78);
+      color: rgba(255,255,255,.92);
+      background: rgba(15,23,42,.38);
+      border-color: rgba(255,255,255,.22);
+      backdrop-filter: blur(16px);
       font-size: 13px;
       font-weight: 760;
-      box-shadow: var(--shadow-soft);
+      box-shadow: 0 18px 40px rgba(0,0,0,.16);
     }
 
     .dot {
@@ -182,8 +213,8 @@
     h3 { color: var(--ink); line-height: 1.14; margin: 0; }
 
     h1 {
-      max-width: 760px;
-      margin-top: 24px;
+      max-width: 900px;
+      margin: 22px 0 0;
       font-size: clamp(46px, 6.4vw, 82px);
       letter-spacing: 0;
     }
@@ -199,10 +230,15 @@
     .hero-title-sub {
       display: block;
       margin-top: 8px;
-      color: var(--ink);
+      color: #fff;
       font-size: clamp(34px, 4.3vw, 56px);
       letter-spacing: 0;
       line-height: 1.12;
+    }
+
+    .hero .accent {
+      background: none;
+      color: #fff;
     }
 
     .hero-badges {
@@ -277,26 +313,29 @@
       margin-top: 18px;
       padding: 10px 14px;
       border-radius: 16px;
-      color: var(--ink);
-      background: rgba(255,255,255,.76);
-      border: 1px solid var(--line);
-      box-shadow: var(--shadow-soft);
+      color: rgba(255,255,255,.90);
+      background: rgba(15,23,42,.38);
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: 0 18px 40px rgba(0,0,0,.16);
+      backdrop-filter: blur(16px);
       font-size: 14px;
       font-weight: 760;
     }
 
-    .product-tag b { color: var(--blue); }
+    .product-tag b { color: #fff; }
 
     .hero-copy {
-      max-width: 710px;
+      max-width: 620px;
       margin: 24px 0 0;
-      color: var(--muted);
+      color: rgba(241,245,249,.82);
       font-size: 18px;
+      text-shadow: 0 1px 18px rgba(0,0,0,.20);
     }
 
     .hero-actions {
       display: flex;
       flex-wrap: wrap;
+      justify-content: flex-start;
       gap: 14px;
       margin-top: 34px;
     }
@@ -320,15 +359,161 @@
       box-shadow: 0 16px 34px rgba(31,94,255,.25);
     }
     .btn-secondary {
-      color: var(--ink);
-      background: rgba(255,255,255,.72);
-      border-color: var(--line);
+      color: #fff;
+      background: rgba(15,23,42,.40);
+      border-color: rgba(255,255,255,.24);
+      backdrop-filter: blur(16px);
     }
 
     .btn.secondary {
       color: var(--ink);
       background: rgba(255,255,255,.72);
       border-color: var(--line);
+    }
+
+    .hero-showcase {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      aspect-ratio: auto;
+      overflow: hidden;
+      border: 0;
+      border-radius: 0;
+      background: #0f172a;
+      box-shadow: none;
+    }
+
+    .hero-showcase::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(15,23,42,.18), transparent 28%, transparent 62%, rgba(15,23,42,.70)),
+        linear-gradient(90deg, rgba(15,23,42,.72), rgba(15,23,42,.28) 42%, rgba(15,23,42,.04) 74%);
+    }
+
+    .hero-video-el {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      filter: saturate(.92) contrast(1.02);
+      background: #0f172a;
+    }
+
+    .hero-media-label,
+    .hero-caption,
+    .hero-video-toggle {
+      position: absolute;
+      z-index: 2;
+    }
+
+    .hero-media-label {
+      top: 24px;
+      left: clamp(28px, 7vw, 96px);
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      color: #eaf2ff;
+      background: rgba(15,23,42,.52);
+      border: 1px solid rgba(255,255,255,.18);
+      backdrop-filter: blur(14px);
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .hero-media-label i {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 5px rgba(34,197,94,.14);
+    }
+
+    .hero-caption {
+      display: none;
+      left: 20px;
+      right: 20px;
+      bottom: 18px;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      color: rgba(255,255,255,.92);
+    }
+
+    .hero-caption strong {
+      display: block;
+      color: #fff;
+      font-size: clamp(18px, 2.2vw, 28px);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .hero-caption span {
+      display: block;
+      max-width: 520px;
+      margin-top: 7px;
+      color: rgba(241,245,249,.78);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .hero-caption em {
+      flex: 0 0 auto;
+      font-style: normal;
+      color: rgba(241,245,249,.86);
+      font-size: 12px;
+      font-weight: 760;
+      letter-spacing: 0;
+    }
+
+    .hero-video-toggle {
+      top: 16px;
+      right: 16px;
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(255,255,255,.20);
+      border-radius: 999px;
+      background: rgba(15,23,42,.50);
+      backdrop-filter: blur(14px);
+      cursor: pointer;
+    }
+
+    .hero-video-toggle::before,
+    .hero-video-toggle::after {
+      content: "";
+      position: absolute;
+      top: 11px;
+      width: 4px;
+      height: 15px;
+      border-radius: 2px;
+      background: #fff;
+    }
+
+    .hero-video-toggle::before { left: 13px; }
+    .hero-video-toggle::after { right: 13px; }
+
+    .hero-video-toggle.is-paused::before {
+      left: 15px;
+      top: 10px;
+      width: 0;
+      height: 0;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-left: 12px solid #fff;
+      border-radius: 0;
+      background: transparent;
+    }
+
+    .hero-video-toggle.is-paused::after {
+      display: none;
     }
 
     .metric-row {
@@ -1096,12 +1281,78 @@
       align-items: start;
     }
 
+    .system-records-single {
+      grid-template-columns: minmax(0, 980px);
+      justify-content: center;
+      align-items: start;
+    }
+
+    .system-overview-stack {
+      display: grid;
+      gap: 26px;
+    }
+
+    .overview-head {
+      display: grid;
+      grid-template-columns: minmax(260px, .24fr) minmax(620px, .58fr) minmax(0, .18fr);
+      gap: 28px;
+      align-items: center;
+      margin-bottom: 34px;
+    }
+
+    .overview-head .section-head {
+      margin-bottom: 0;
+    }
+
+    .records-metrics {
+      max-width: none;
+      margin: 0;
+      padding-top: 0;
+      border-top: 0;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .records-metrics .metric {
+      min-height: 126px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 20px 22px 20px 24px;
+      background: rgba(255,255,255,.74);
+    }
+
+    .records-metrics .metric strong {
+      font-size: 17px;
+    }
+
+    .records-metrics .metric span {
+      margin-top: 10px;
+      font-size: 14px;
+      line-height: 1.62;
+    }
+
+    .record-video-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      align-items: start;
+    }
+
     .record-card {
       overflow: hidden;
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background: rgba(255,255,255,.88);
       box-shadow: var(--shadow-soft);
+    }
+
+    .record-card-primary {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .record-card-centered {
+      width: 100%;
     }
 
     .record-media {
@@ -1122,6 +1373,14 @@
       padding: 22px 24px 24px;
     }
 
+    .record-copy-compact {
+      padding: 18px 20px 20px;
+    }
+
+    .record-copy-compact h3 {
+      font-size: 19px;
+    }
+
     .record-copy h3 {
       margin: 0;
       color: var(--ink);
@@ -1132,6 +1391,86 @@
       margin: 10px 0 0;
       color: var(--muted);
       font-size: 14px;
+    }
+
+    .record-side {
+      display: grid;
+      align-content: start;
+      gap: 16px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.88);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .record-side-fill {
+      min-height: 100%;
+    }
+
+    .record-side h3 {
+      margin: 0;
+      font-size: 23px;
+    }
+
+    .record-steps {
+      display: grid;
+      grid-template-rows: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 2px;
+      min-height: 0;
+    }
+
+    .record-step {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 13px 14px;
+      border-radius: 16px;
+      background: #f4f8ff;
+      border: 1px solid rgba(31,94,255,.08);
+    }
+
+    .record-step i {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--ink);
+      font-style: normal;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .record-step b {
+      display: block;
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.3;
+    }
+
+    .record-step span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .records-flow {
+      width: min(980px, 100%);
+      margin: 0 auto;
+      padding: 0;
+    }
+
+    .overview-flow {
+      width: min(760px, 100%);
+      margin: 0;
+      padding-bottom: 5px;
+      justify-self: center;
     }
 
     .record-meta {
@@ -1454,11 +1793,15 @@
       }
       .links a:not(.nav-action) { display: none; }
       .hero-inner,
+      .overview-head,
       .section-head,
       .architecture,
       .grid-3,
       .grid-4,
       .system-records,
+      .system-records-single,
+      .records-metrics,
+      .record-video-grid,
       .support-grid,
       .unit-layout,
       .unit-card,
@@ -1471,8 +1814,20 @@
         gap: 12px;
       }
       .news-status { text-align: left; }
-      .hero { padding-top: 68px; }
-      .hero-inner { gap: 42px; }
+      .hero { min-height: calc(100vh - 76px); min-height: calc(100svh - 76px); }
+      .hero-inner {
+        min-height: calc(100vh - 76px);
+        min-height: calc(100svh - 76px);
+        gap: 0;
+      }
+      .hero-lead {
+        max-width: min(720px, calc(100% - 56px));
+        margin: 0 28px clamp(32px, 7vh, 70px);
+        text-align: left;
+      }
+      .hero-lead h1,
+      .hero-copy { margin-left: 0; margin-right: 0; }
+      .hero-actions { justify-content: flex-start; }
       .hero-visual { min-height: auto; }
       .case-row { align-items: start; }
       .case-list {
@@ -1490,13 +1845,55 @@
       .section,
       .hero-inner,
       .footer-inner { width: min(100% - 28px, var(--max)); }
+      .hero-inner { width: 100%; }
       .brand-logo {
         width: 142px;
         height: 58px;
       }
-      .hero { padding: 48px 0 48px; }
+      .brand-word {
+        min-height: 58px;
+        font-size: 19px;
+      }
+      .hero { padding: 0; }
       h1 { font-size: 42px; }
       .hero-copy { font-size: 16px; }
+      .hero-showcase {
+        width: 100%;
+        margin-left: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      .hero-showcase::after {
+        background:
+          linear-gradient(180deg, rgba(15,23,42,.18), rgba(15,23,42,.06) 36%, rgba(15,23,42,.78)),
+          linear-gradient(90deg, rgba(15,23,42,.64), rgba(15,23,42,.14) 72%);
+      }
+      .hero-media-label {
+        top: 10px;
+        left: 14px;
+        padding: 7px 9px;
+        font-size: 11px;
+      }
+      .hero-video-toggle {
+        top: 9px;
+        right: 9px;
+        width: 34px;
+        height: 34px;
+      }
+      .hero-caption {
+        left: 12px;
+        right: 12px;
+        bottom: 10px;
+        display: none;
+      }
+      .hero-caption span,
+      .hero-caption em {
+        display: none;
+      }
+      .hero-caption strong {
+        max-width: calc(100% - 46px);
+        font-size: 16px;
+      }
       .mock-body { grid-template-columns: 1fr; }
       .os-link-status {
         grid-template-columns: repeat(5, minmax(48px, 1fr));
@@ -1579,7 +1976,7 @@
   <div class="page">
     <header class="topbar">
       <nav class="nav" aria-label="主导航">
-        <a class="brand" href="#top" aria-label="CyberClaw 首页"><img class="brand-logo" src="lingmou-logo-selected-transparent.png" alt="灵眸 OS" /></a>
+        <a class="brand" href="#top" aria-label="Liminal（灵眸）OS 首页"><span class="brand-word">Liminal（灵眸）OS</span></a>
         <div class="links">
           <a href="#records">系统实录</a>
           <a href="#eye">核心能力</a>
@@ -1587,7 +1984,7 @@
           <a href="#outputs">成果动态</a>
           <a href="#team">研发团队</a>
           <a href="#contact">访问反馈</a>
-          <a href="mailto:wangqb6@outlook.com?subject=CyberClaw%20%E5%B7%A5%E4%BD%9C%E5%8F%B0%E8%AE%BF%E9%97%AE%E7%94%B3%E8%AF%B7" class="nav-action">申请访问</a>
+          <a href="mailto:wangqb6@outlook.com?subject=Liminal（灵眸）OS工作台访问申请" class="nav-action">申请访问</a>
         </div>
       </nav>
     </header>
@@ -1595,104 +1992,89 @@
     <main id="top">
       <section class="hero">
         <div class="hero-inner">
-          <div class="reveal">
+          <div class="hero-lead reveal">
             <div class="eyebrow"><span class="dot"></span>跨空间智能体操作系统</div>
-            <h1><span class="accent">CyberClaw</span><span class="hero-title-sub">灵眸 OS</span></h1>
+            <h1><span class="accent">Liminal（灵眸）</span><span class="hero-title-sub">OS</span></h1>
             <div class="product-tag"><b>一键连接，一瞬智慧</b></div>
-            <p class="hero-copy">接入机器人、无人车、无人机、数据源到灵眸 OS，用户只需描述任务目标，系统即可自动理解需求、组织资源、动态协同、执行闭环。灵光一闪的构想，在物理世界即刻着陆。</p>
+            <p class="hero-copy">接入机器人、无人车、无人机、数据源到 Liminal（灵眸）OS，用户只需描述任务目标，系统即可自动理解需求、组织资源、动态协同、执行闭环。灵光一闪的构想，在物理世界即刻着陆。</p>
             <div class="hero-actions">
               <a class="btn btn-primary" href="login.html">进入工作台</a>
-              <a class="btn btn-secondary" href="#cases">查看应用场景</a>
-            </div>
-            <div class="metric-row" aria-label="系统核心价值">
-              <div class="metric"><strong>开放接入</strong><span>一键连接机器人、无人车、无人机等异构设备，作为操作系统可调度的物理节点。</span></div>
-              <div class="metric"><strong>数实融合</strong><span>接入业务数据、运行日志、知识库、经验库等，形成操作系统可访问的场景数据源。</span></div>
-              <div class="metric"><strong>智能调度</strong><span>围绕任务目标自动编排智能体，调用技能与工具，完成跨空间资源协同。</span></div>
-              <div class="metric"><strong>动态协同</strong><span>根据环境变化与任务进展实时调整策略，实现感知、决策与执行闭环优化。</span></div>
+              <a class="btn btn-secondary" href="#records">查看系统实录</a>
             </div>
           </div>
 
-          <div class="hero-visual reveal" aria-label="系统界面示意图">
-            <div class="dashboard">
-              <div class="mock-window">
-                <div class="mock-top"><i></i><i></i><i></i></div>
-                <div class="os-link-status" aria-label="运行链路状态条">
-                  <span class="os-link-step"><i></i>设备接入</span>
-                  <span class="os-link-step"><i></i>任务理解</span>
-                  <span class="os-link-step"><i></i>智能调度</span>
-                  <span class="os-link-step"><i></i>动态执行</span>
-                  <span class="os-link-step"><i></i>结果输出</span>
-                </div>
-                <div class="mock-body">
-                  <aside class="side-card">
-                    <h4>任务调度</h4>
-                    <div class="pill-stack">
-                      <span>任务目标 <b>工业异常排查</b></span>
-                      <span>信息端 <b>日志 / 手册</b></span>
-                      <span>物理端 <b>Limo 机器车</b></span>
-                      <span>协同结果 <b>数据协同与推理</b></span>
-                    </div>
-                  </aside>
-                  <section>
-                    <div class="map-card">
-                      <div class="route"></div>
-                      <span class="node a"></span>
-                      <span class="node b"></span>
-                      <span class="node c"></span>
-                      <div class="info-preview" aria-hidden="true"><b>信息示例</b><span></span><span></span><span></span></div>
-                    </div>
-                    <div class="log-card">
-                      <h4>推理日志</h4>
-                      <div class="log-line"><b>判断</b><span>当前证据不足，需补充现场状态与运行记录。</span></div>
-                      <div class="log-line"><b>规划</b><span>导航至装配线区域，读取显示面板并检索日志。</span></div>
-                      <div class="log-line"><b>取证</b><span>融合视觉证据与数字记录，生成可解释结论。</span></div>
-                    </div>
-                  </section>
-                </div>
+          <div class="hero-showcase" aria-label="Liminal（灵眸）OS 现场运行视频">
+            <video class="hero-video-el" autoplay muted playsinline preload="auto" poster="assets/media/system-record-01-poster.jpg" data-loop-start="0" data-loop-end="14.8">
+              <source src="assets/media/system-record-01.mp4" type="video/mp4" />
+              您的浏览器暂不支持视频播放。
+            </video>
+            <div class="hero-media-label"><i></i>产品介绍画面</div>
+            <button class="hero-video-toggle" type="button" aria-label="暂停首屏视频"></button>
+            <div class="hero-caption" aria-hidden="true">
+              <div>
+                <strong>跨空间智能体操作系统</strong>
+                <span>以产品介绍画面呈现系统入口、任务编排与跨空间协同能力。</span>
               </div>
+              <em>Live system record</em>
             </div>
-            <div class="float-label fl-1">物理空间：图像、视频、声音等</div>
-            <div class="float-label fl-2">信息空间：知识、经验、日志等</div>
-            <div class="float-label fl-3">跨空间数据协同与推理</div>
           </div>
         </div>
       </section>
 
       <section class="section" id="records">
-        <div class="section-head reveal">
-          <div>
-            <div class="kicker">System Records</div>
-            <h2>系统实录</h2>
+        <div class="overview-head reveal">
+          <div class="section-head">
+            <div>
+              <div class="kicker">System Overview</div>
+              <h2>系统介绍</h2>
+            </div>
           </div>
-          <p>以实录视频呈现灵眸 OS 的任务调度、现场执行与结果反馈过程，便于直观看到跨空间智能体系统从理解需求到闭环运行的完整链路。</p>
+          <div class="records-flow overview-flow">
+            <div class="scene-flow" aria-label="系统运行流程">
+              <div class="scene-flow-step"><i>1</i><span>接入设备/数据</span></div>
+              <div class="scene-flow-step"><i>2</i><span>自然语言交互</span></div>
+              <div class="scene-flow-step"><i>3</i><span>自动调度规划</span></div>
+              <div class="scene-flow-step"><i>4</i><span>动态调整决策</span></div>
+              <div class="scene-flow-step"><i>5</i><span>任务结果输出</span></div>
+            </div>
+          </div>
         </div>
-        <div class="system-records">
-          <article class="record-card reveal">
-            <div class="record-media">
-              <video controls preload="metadata" poster="system-record-01-poster.jpg">
-                <source src="system-record-01.mp4" type="video/mp4" />
-                您的浏览器暂不支持视频播放。
-              </video>
-            </div>
-            <div class="record-copy">
-              <span class="record-meta">任务调度实录</span>
-              <h3>跨空间任务协同过程</h3>
-              <p>展示系统围绕任务目标进行资源接入、状态分析、推理规划与执行反馈的运行过程。</p>
-            </div>
-          </article>
-          <article class="record-card reveal">
-            <div class="record-media">
-              <video controls preload="metadata" poster="system-record-02-poster.jpg">
-                <source src="system-record-02.mp4" type="video/mp4" />
-                您的浏览器暂不支持视频播放。
-              </video>
-            </div>
-            <div class="record-copy">
-              <span class="record-meta">现场执行实录</span>
-              <h3>物理场景执行与回传</h3>
-              <p>呈现物理现场中的状态识别、路径执行和结果回传，让系统能力以真实画面落地可见。</p>
-            </div>
-          </article>
+        <div class="system-overview-stack">
+          <div class="metric-row records-metrics reveal" aria-label="系统核心价值">
+            <div class="metric"><strong>开放接入</strong><span>一键连接机器人、无人车、无人机等异构设备，作为操作系统可调度的物理节点。</span></div>
+            <div class="metric"><strong>数实融合</strong><span>接入业务数据、运行日志、知识库、经验库等，形成操作系统可访问的场景数据源。</span></div>
+            <div class="metric"><strong>智能调度</strong><span>围绕任务目标自动编排智能体，调用技能与工具，完成跨空间资源协同。</span></div>
+            <div class="metric"><strong>动态协同</strong><span>根据环境变化与任务进展实时调整策略，实现感知、决策与执行闭环优化。</span></div>
+          </div>
+
+          <div class="record-video-grid">
+            <article class="record-card reveal">
+              <div class="record-media">
+                <video controls preload="metadata" poster="assets/media/system-record-01-poster.jpg">
+                  <source src="assets/media/system-record-01.mp4#t=14.8" type="video/mp4" />
+                  您的浏览器暂不支持视频播放。
+                </video>
+              </div>
+              <div class="record-copy record-copy-compact">
+                <span class="record-meta">产品介绍片段</span>
+                <h3>Liminal（灵眸）OS 能力展开</h3>
+                <p>承接首页开屏后的介绍片段，继续呈现系统界面、能力组织与跨空间协同过程。</p>
+              </div>
+            </article>
+            <article class="record-card reveal">
+              <div class="record-media">
+                <video controls preload="metadata" poster="assets/media/system-record-02-poster.jpg">
+                  <source src="assets/media/system-record-02.mp4" type="video/mp4" />
+                  您的浏览器暂不支持视频播放。
+                </video>
+              </div>
+              <div class="record-copy record-copy-compact">
+                <span class="record-meta">现场执行实录</span>
+                <h3>物理场景执行与回传</h3>
+                <p>展示系统在真实操作过程中的任务接入、现场状态识别和结果持续回传。</p>
+              </div>
+            </article>
+          </div>
         </div>
       </section>
 
@@ -1702,7 +2084,7 @@
             <div class="kicker">Cognitive Foundation</div>
             <h2>CyberEye 认知底座</h2>
           </div>
-          <p>CyberEye作为灵眸OS的认知内核，通过大模型技术整合物理空间具身感知与信息空间多源数据，进行高阶推理与主动认知，为操作系统的智能调度、任务决策和推理判断提供智能能力。</p>
+          <p>CyberEye 作为 Liminal（灵眸）OS 的认知内核，通过大模型技术整合物理空间具身感知与信息空间多源数据，进行高阶推理与主动认知，为操作系统的智能调度、任务决策和推理判断提供智能能力。</p>
         </div>
         <div class="grid-3 cognition-points">
           <article class="card reveal"><span class="num cognition-symbol">A</span><h3>跨空间统一建模</h3><p class="microline">场景可表征 · 动态可演化</p><p>把现场设备、传感器数据和业务系统统一映射到同一任务语境中。</p></article>
@@ -1716,16 +2098,6 @@
           <div>
             <div class="kicker">Application Scenarios</div>
             <h2>应用场景</h2>
-          </div>
-        </div>
-        <div class="scene-usage reveal">
-          <p>灵眸OS是面向具身载体与数字信息的跨空间智能体操作系统，旨在实现具身载体、行业数据的一键接入，并基于用户意图自动调度相关智能体完成任务。</p>
-          <div class="scene-flow" aria-label="使用模式流程">
-            <div class="scene-flow-step"><i>1</i><span>接入设备/数据</span></div>
-            <div class="scene-flow-step"><i>2</i><span>自然语言交互</span></div>
-            <div class="scene-flow-step"><i>3</i><span>自动调度规划</span></div>
-            <div class="scene-flow-step"><i>4</i><span>动态调整决策</span></div>
-            <div class="scene-flow-step"><i>5</i><span>任务结果输出</span></div>
           </div>
         </div>
         <div class="case-list">
@@ -1746,7 +2118,7 @@
           <div class="news-list achievement-list">
             <article class="news-item reveal"><span class="news-type">评测基准</span><div><h3>PhyInfoEQA 跨空间评测基准</h3><p>面向物理空间与信息空间协同任务，构建具身智能问答与证据获取评测基础。</p></div><span class="news-status">成果整理中</span></article>
             <article class="news-item reveal"><span class="news-type">代理框架</span><div><h3>TriPMA 主动认知代理框架</h3><p>围绕可回答性判断、目标规划、证据获取与动态记忆管理，支撑复杂任务主动探索。</p></div><span class="news-status">框架完善中</span></article>
-            <article class="news-item reveal"><span class="news-type">系统原型</span><div><h3>灵眸OS 工作台原型</h3><p>集成自然语言任务入口、跨空间调度、推理日志、设备接入与可视化工作台能力。</p></div><span class="news-status">持续完善</span></article>
+            <article class="news-item reveal"><span class="news-type">系统原型</span><div><h3>Liminal（灵眸）OS 工作台原型</h3><p>集成自然语言任务入口、跨空间调度、推理日志、设备接入与可视化工作台能力。</p></div><span class="news-status">持续完善</span></article>
             <article class="news-item future-slot reveal"><p>后续成果待更新</p></article>
           </div>
         </div>
@@ -1801,14 +2173,14 @@
         </div>
         <div class="hero-actions">
           <a class="btn btn-primary" href="login.html">进入工作台</a>
-          <a class="btn btn-secondary" href="mailto:wangqb6@outlook.com?subject=CyberClaw%20%E5%B7%A5%E4%BD%9C%E5%8F%B0%E8%AE%BF%E9%97%AE%E7%94%B3%E8%AF%B7">申请访问 / 反馈问题</a>
+          <a class="btn btn-secondary" href="mailto:wangqb6@outlook.com?subject=Liminal（灵眸）OS工作台访问申请">申请访问 / 反馈问题</a>
         </div>
       </section>
     </main>
 
     <footer>
       <div class="footer-inner">
-        <a class="brand" href="#top"><img class="brand-logo" src="lingmou-logo-selected-transparent.png" alt="灵眸 OS" /></a>
+        <a class="brand" href="#top"><span class="brand-word">Liminal（灵眸）OS</span></a>
         <div>北京交通大学 · 北京市海淀区上园村3号 · wangqb6@outlook.com</div>
       </div>
     </footer>
@@ -1822,6 +2194,65 @@
     }, { threshold: .12 });
 
     document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+
+    const heroVideo = document.querySelector(".hero-video-el");
+    const heroVideoToggle = document.querySelector(".hero-video-toggle");
+    if (heroVideo) {
+      const loopStart = Number(heroVideo.dataset.loopStart || 0);
+      const loopEnd = Number(heroVideo.dataset.loopEnd || 0);
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const syncVideoButton = () => {
+        if (!heroVideoToggle) return;
+        heroVideoToggle.classList.toggle("is-paused", heroVideo.paused);
+        heroVideoToggle.setAttribute("aria-label", heroVideo.paused ? "播放首屏视频" : "暂停首屏视频");
+      };
+
+      const playHeroVideo = () => {
+        if (reducedMotion) {
+          heroVideo.pause();
+          syncVideoButton();
+          return;
+        }
+        const playPromise = heroVideo.play();
+        if (playPromise) playPromise.catch(syncVideoButton);
+      };
+
+      if (reducedMotion) {
+        heroVideo.pause();
+      }
+
+      const startHeroVideoWhenVisible = () => {
+        if (!reducedMotion && document.visibilityState === "visible") playHeroVideo();
+      };
+      document.addEventListener("visibilitychange", startHeroVideoWhenVisible);
+      window.addEventListener("pageshow", startHeroVideoWhenVisible);
+      startHeroVideoWhenVisible();
+
+      let loopHoldTimer = null;
+      heroVideo.addEventListener("timeupdate", () => {
+        if (loopHoldTimer || loopEnd <= loopStart || heroVideo.currentTime < loopEnd) return;
+        heroVideo.pause();
+        loopHoldTimer = window.setTimeout(() => {
+          heroVideo.currentTime = loopStart;
+          loopHoldTimer = null;
+          playHeroVideo();
+        }, 900);
+      });
+
+      heroVideo.addEventListener("play", syncVideoButton);
+      heroVideo.addEventListener("pause", syncVideoButton);
+
+      if (heroVideoToggle) {
+        heroVideoToggle.addEventListener("click", () => {
+          if (heroVideo.paused) playHeroVideo();
+          else heroVideo.pause();
+          syncVideoButton();
+        });
+      }
+
+      syncVideoButton();
+    }
 
     const achievementShell = document.querySelector(".achievement-shell");
     const achievementList = document.querySelector(".achievement-list");
