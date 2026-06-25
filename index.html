@@ -178,7 +178,7 @@
     .hero-lead {
       position: relative;
       z-index: 3;
-      max-width: 620px;
+      max-width: min(920px, calc(100% - 56px));
       margin: 0 0 clamp(38px, 8vh, 86px) clamp(30px, 7vw, 96px);
       text-align: left;
       color: #fff;
@@ -213,10 +213,11 @@
     h3 { color: var(--ink); line-height: 1.14; margin: 0; }
 
     h1 {
-      max-width: 900px;
+      max-width: 100%;
       margin: 22px 0 0;
-      font-size: clamp(46px, 6.4vw, 82px);
+      font-size: clamp(44px, 5.6vw, 76px);
       letter-spacing: 0;
+      white-space: nowrap;
     }
 
     .accent {
@@ -228,12 +229,12 @@
 
 
     .hero-title-sub {
-      display: block;
-      margin-top: 8px;
+      display: inline;
+      margin-top: 0;
       color: #fff;
-      font-size: clamp(34px, 4.3vw, 56px);
+      font-size: inherit;
       letter-spacing: 0;
-      line-height: 1.12;
+      line-height: inherit;
     }
 
     .hero .accent {
@@ -1855,7 +1856,10 @@
         font-size: 19px;
       }
       .hero { padding: 0; }
-      h1 { font-size: 42px; }
+      h1 {
+        font-size: clamp(30px, 8.4vw, 42px);
+        white-space: nowrap;
+      }
       .hero-copy { font-size: 16px; }
       .hero-showcase {
         width: 100%;
@@ -1994,7 +1998,7 @@
         <div class="hero-inner">
           <div class="hero-lead reveal">
             <div class="eyebrow"><span class="dot"></span>跨空间智能体操作系统</div>
-            <h1><span class="accent">Liminal（灵眸）</span><span class="hero-title-sub">OS</span></h1>
+            <h1><span class="accent">Liminal（灵眸）OS</span></h1>
             <div class="product-tag"><b>一键连接，一瞬智慧</b></div>
             <p class="hero-copy">接入机器人、无人车、无人机、数据源到 Liminal（灵眸）OS，用户只需描述任务目标，系统即可自动理解需求、组织资源、动态协同、执行闭环。灵光一闪的构想，在物理世界即刻着陆。</p>
             <div class="hero-actions">
